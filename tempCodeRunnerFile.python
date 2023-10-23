@@ -1,0 +1,14 @@
+class A :
+
+    def __init__(self) -> None:
+        print('A')
+
+class B (A):
+    
+    def __init__(self) -> None:
+
+        print('B')
+        super().__init__()
+
+obj = B()
+

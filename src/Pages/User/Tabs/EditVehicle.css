@@ -1,0 +1,45 @@
+.form-Wrapper{
+    border-radius: 18px;
+  
+    box-shadow: 13px 13px 29px #bebebe, -13px -13px 29px #ffffff;
+  }
+  
+  .button {
+    background-color: #272829;
+    color: #fff;
+    width: max-content;
+    height: 2.9em;
+    border: #090a0a 0.2em solid;
+    border-radius: 11px;
+    text-align: right;
+    transition: all 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .button:hover {
+    background-color: #ffffff;
+    color: #272829;
+    cursor: pointer;
+  }
+  
+  .button svg {
+    width: 1.6em;
+    margin: 0.8em 1em;
+  
+    /* position: absolute; */
+    display: flex;
+    transition: all 0.6s ease;
+  }
+  
+  .button:hover svg {
+    transform: translateX(5px);
+  }
+  
+  .text {
+    margin: 0 1.5em;
+  }
+  
+  
+  

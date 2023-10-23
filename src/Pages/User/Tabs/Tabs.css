@@ -1,0 +1,12 @@
+.user-edit-input{
+    background-color: #ffffff;
+}
+.user-edit-input:active{
+    background-color: #fff;
+    
+}
+
+.user-edit-input:focus{
+    background-color: transparent;
+    
+}

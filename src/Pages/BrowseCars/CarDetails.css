@@ -1,0 +1,10 @@
+.product-btn{
+    background-color: black;
+}
+
+.product-btn:hover{
+    background-color: white;
+    color: black;
+
+   
+}
