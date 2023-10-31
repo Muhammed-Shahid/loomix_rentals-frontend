@@ -11,6 +11,7 @@ import { NavLink } from "react-router-dom";
 import Users from "../Tabs/Users";
 import ListedVehicles from "../Tabs/ListedVehicles";
 import Analytics from "../Tabs/Analytics";
+import Coupons from "../Tabs/Coupons";
 
 const Dashboard = () => {
   const [tabName, setTabName] = useState("user");
@@ -23,6 +24,8 @@ const Dashboard = () => {
         return <ListedVehicles />;
       case "analytics":
         return <Analytics />;
+      case "coupon":
+          return <Coupons/>;
 
       default:
         return null;
@@ -69,6 +72,15 @@ const Dashboard = () => {
               >
                 <CDBSidebarMenuItem icon="chart-line">
                   Analytics
+                </CDBSidebarMenuItem>
+              </NavLink>
+
+              <NavLink
+                activeClassName="activeClicked"
+                onClick={() => setTabName("coupon")}
+              >
+                <CDBSidebarMenuItem icon="">
+                  Coupons
                 </CDBSidebarMenuItem>
               </NavLink>
 

@@ -15,7 +15,7 @@ function Login() {
       password,
     };
 
-    const { data } = await axios.post("http://localhost:8000/token/", user, {
+    const { data } = await axios.post("http://3.111.221.228/token/", user, {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
@@ -28,7 +28,7 @@ function Login() {
         "Authorization"
       ] = `Bearer ${localStorage.getItem("access_token")}`;
 
-      const  user_data  = await axios.get("http://localhost:8000/auth/current_user/")
+      const  user_data  = await axios.get("http://3.111.221.228/auth/current_user/")
         .then((res) => {
        
           if (res.data.is_blocked) {

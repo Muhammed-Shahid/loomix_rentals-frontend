@@ -25,23 +25,23 @@ function ListedVehicles() {
     });
   };
 
-  const handleOk = (id,discount) => {
-    if (discount < 0 || discount > 100) {
+  const handleOk = () => {
+    if (newDiscount < 0 || newDiscount > 100) {
       setdiscountException(true);
-    } else {
+    } else if (newDiscount > 0 && newDiscount <100){
       setModalConfirmLoading(true);
 
      const requestData={
       vehicle_id:currentVehicleDiscount.vehicle_id,
       discount:newDiscount
      }
-      
+     console.log('discounty',requestData.discount); 
       instance.patch('/vehicles_view/',requestData).then((res)=>{
         console.log(res.data);
         setOpen(false);
         setModalConfirmLoading(false);
       })
-      console.log(discount);
+      console.log(newDiscount);
 
     }
   };
@@ -191,7 +191,7 @@ function ListedVehicles() {
             <h6>%</h6>
           </div>
           {discountException && (
-            <p style={{ color: "red" }}>Discount value must be from 0 to 100</p>
+            <p style={{ color: "red" }}>Discount value must be from 0 to 99</p>
           )}
         </div>
       </Modal>

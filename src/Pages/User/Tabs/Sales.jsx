@@ -8,7 +8,7 @@ function Sales() {
   const [products, setProducts] = useState([]);
   const [orderStatus, setorderStatus] = useState([]);
 
-  const [reRender, setreRender] = useState(false)
+  const [reRender, setreRender] = useState(false);
 
   useEffect(() => {
     const params = {
@@ -26,10 +26,10 @@ function Sales() {
   const progressChangeHandler = (progress_value, order_id) => {
     const params = {
       progress: progress_value,
-      order_id:order_id
+      order_id: order_id,
     };
     primary_instance.patch("/manage_order/", { params: params }).then((res) => {
-      setreRender(!reRender)
+      setreRender(!reRender);
     });
   };
 
@@ -107,32 +107,36 @@ function Sales() {
                                   />
                                 </div>
                               )}
-                              <div className="d-flex justify-content-around mb-1">
-                                <p className="text-muted mt-1 mb-0 small ms-xl-5">
-                                  Processing
-                                </p>
-                                <p className="text-muted mt-1 mb-0 small ms-xl-5">
-                                  Shipping
-                                </p>
-                                <p className="text-muted mt-1 mb-0 small ms-xl-5">
-                                  Delivered
-                                </p>
-                              </div>
+                              {
+                                <div className="d-flex justify-content-around mb-1">
+                                  <p className="text-muted mt-1 mb-0 small ms-xl-5">
+                                    Processing
+                                  </p>
+                                  <p className="text-muted mt-1 mb-0 small ms-xl-5">
+                                    Shipping
+                                  </p>
+                                  <p className="text-muted mt-1 mb-0 small ms-xl-5">
+                                    Delivered
+                                  </p>
+                                </div>
+                              }
                             </div>
                           </div>
                         )}
                       </div>
-                      <select
-                       className="w-25 rounded border"
-                        defaultValue={order.order_status}
-                        onChange={(e) =>
-                          progressChangeHandler(e.target.value, order.id)
-                        }
-                      >
-                        <option value="Processing">Processing</option>
-                        <option value="Shipping">Shipping</option>
-                        <option value="Delivered">Delivered</option>
-                      </select>
+                      {order && order.order_status != "Cancelled" && (
+                        <select
+                          className="w-25 rounded border"
+                          defaultValue={order.order_status}
+                          onChange={(e) =>
+                            progressChangeHandler(e.target.value, order.id)
+                          }
+                        >
+                          <option value="Processing">Processing</option>
+                          <option value="Shipping">Shipping</option>
+                          <option value="Delivered">Delivered</option>
+                        </select>
+                      )}
                       <div
                         style={{
                           display: "flex",

@@ -10,7 +10,7 @@ function ListCars() {
   const [exterior, setExterior] = useState(null);
   const [currentUser, setCurrentUser] = useState("");
   
-  const base_url = "http://localhost:8000";
+  const base_url = "http://65.0.135.19";
   
   const token = localStorage.getItem("access_token");
   

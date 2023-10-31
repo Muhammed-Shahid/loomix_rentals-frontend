@@ -10,11 +10,13 @@ import {
   Col,
   Divider,
   Row,
-  Avatar,
+  Input,
   Card,
   Button,
   Pagination,
   Dropdown,
+  InputNumber,
+  Slider,
 } from "antd";
 
 import {
@@ -37,7 +39,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
-
+const { Search } = Input;
 const { Meta } = Card;
 
 const items = [
@@ -95,6 +97,8 @@ export default function Browse() {
   const [filterData, setFilterData] = useState({
     make: "",
     location: "",
+    price_range: 10000,
+    search_param: "",
   });
 
   const handleInputChange = (key, value) => {
@@ -109,7 +113,7 @@ export default function Browse() {
     setFilterBtn(true);
   };
 
-  const base_url = "http://localhost:8000";
+  const base_url = "http://3.111.221.228";
 
   const token = localStorage.getItem("access_token");
 
@@ -129,7 +133,7 @@ export default function Browse() {
             setVehicles(res.data.vehicles);
             setMake(res.data.makes);
             setLocation(res.data.locations);
-            console.log(vehicles);
+            console.log(res.data.vehicles);
             console.log(make);
           })
           .catch((error) => {
@@ -159,6 +163,9 @@ export default function Browse() {
     const params = {
       make: filterData.make,
       location: filterData.location,
+      price_range:filterData.price_range,
+      search_param: filterData.search_param,
+
     };
     try {
       axios
@@ -193,7 +200,7 @@ export default function Browse() {
     if (!wishlist) {
       console.log(product_id);
       axios
-        .post("http://localhost:8000/manage_cart/", {
+        .post("http://3.111.221.228/manage_cart/", {
           params: params,
           headers: {
             "Content-Type": "application/json",
@@ -206,7 +213,7 @@ export default function Browse() {
         });
     } else {
       axios
-        .post("http://localhost:8000/manage_wishlist/", {
+        .post("http://3.111.221.228/manage_wishlist/", {
           params: params,
           headers: {
             "Content-Type": "application/json",
@@ -256,6 +263,19 @@ export default function Browse() {
     </Menu>
   );
 
+  const onSearch = (value, _e, info) => {
+    handleInputChange("search_param", value);
+    handleFilterSubmit();
+  };
+
+  const [sliderInputValue, setSliderInputValue] = useState(1);
+
+  const onSliderChange = (newValue) => {
+    setSliderInputValue(newValue);
+
+    console.log('new value' ,newValue);
+    handleInputChange("price_range", newValue);
+  };
   return (
     <Layout hasSider>
       <Sider
@@ -264,12 +284,14 @@ export default function Browse() {
         theme="light"
         collapsed={collapsed}
         style={{
-          overflow: "auto",
+          // overflow: "auto",
           height: "100vh",
           position: "fixed",
           left: 0,
           top: 105,
           bottom: 0,
+          width: "500px",
+          minWidth: "500px",
           paddingTop: 20,
           borderRadius: 10,
         }}
@@ -287,6 +309,7 @@ export default function Browse() {
           }}
         />
         <div className="demo-logo-vertical" />
+
         <Menu theme="light" mode="inline">
           <Menu.Item key={1} style={{}}>
             <Dropdown
@@ -323,6 +346,33 @@ export default function Browse() {
             </Dropdown>
           </Menu.Item>
         </Menu>
+        <Menu>
+          <div style={{ textAlign: "left", marginTop: "5rem", padding: "5px" }}>
+            <p>Price Range</p>
+
+            <Row>
+              <Col span={12}>
+                <Slider
+                  min={800}
+                  max={10000}
+                  onChange={onSliderChange}
+                  value={
+                    typeof sliderInputValue === "number" ? sliderInputValue : 0
+                  }
+                />
+              </Col>
+              <Col span={4}>
+                <InputNumber
+                  min={800}
+                  max={10000}
+                  style={{ margin: "0 16px" }}
+                  value={sliderInputValue}
+                  onChange={onSliderChange}
+                />
+              </Col>
+            </Row>
+          </div>
+        </Menu>
 
         <Button className="w-75 mt-5" onClick={handleFilterSubmit}>
           Filter
@@ -338,7 +388,7 @@ export default function Browse() {
       >
         <Content
           style={{
-            margin: "24px 16px 0 ",
+            margin: "24px 16px  ",
             overflow: "initial",
           }}
         >
@@ -350,6 +400,19 @@ export default function Browse() {
               borderRadius: 10,
             }}
           >
+            <div
+              className="search-box-div "
+              style={{ boxSizing: "border-box", maxWidth: "fit-content" }}
+            >
+              <Search
+                styles={{ background: "white" }}
+                placeholder="Search make , model , place"
+                onSearch={onSearch}
+                style={{ width: 300 }}
+              />
+            </div>
+            <br />
+
             <Row
               gutter={{
                 xs: 8,

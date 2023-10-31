@@ -30,7 +30,7 @@ function CarDetails() {
     setMainImage(url);
   };
 
-  const base_url = "http://localhost:8000";
+  const base_url = "http://3.111.221.228";
   const [mainImage, setMainImage] = useState(
     base_url + vehicleDetails.exterior_image
   );
@@ -52,9 +52,9 @@ function CarDetails() {
   }, [vehicle_id]);
 
   return (
-    <div className="container pt-5 rounded">
+    <div className="container pt-5 ">
       <Layout>
-        <Content>
+        <Content style={{ background: "white" }}>
           <Row
             gutter={{
               xs: 8,
@@ -261,6 +261,23 @@ function CarDetails() {
           </Row>
         </Content>
       </Layout>
+
+      <section
+        className="review-section mt-5"
+        style={{ textAlign: "left", marginTop: "150px" }}
+      >
+        <h4>Reviews</h4>
+        <div className="row g-2 p-3">
+          <div
+            className="col col-md-4 m-2 border rounded "
+            style={{ fontSize: "16px" }}
+          >
+            <p style={{ fontWeight: "500" }}>First Name</p>
+            <p>Star rating </p>
+            <p>Descriptiono</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

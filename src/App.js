@@ -66,7 +66,7 @@ function App() {
 
     {
       path: "/cart/",
-      element: <Cart />,
+      element: <Cart user={user} />,
     },
     {
       path: "/vehicle-edit/:vehicle_id",
@@ -80,8 +80,8 @@ function App() {
 
   return (
     <div className="App">
-      {(window.location.href != "http://localhost:3000/login") |
-        (window.location.href != "http://localhost:3000/") && (
+      {(window.location.pathname != "/login") |
+        (window.location.pathname != "/") && (
         <NavBar handleUserChange={handleUserChange} />
       )}
 

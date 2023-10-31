@@ -15,10 +15,13 @@ import {
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import primary_instance from "../../Components/axios_primary_instance";
+import { Link } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const { Meta } = Card;
+
+        
 
 function Wishlist() {
   const [vehicles, setVehicles] = useState([]);
@@ -51,7 +54,7 @@ function Wishlist() {
     }
   };
 
-  const base_url = "http://localhost:8000/";
+  const base_url = "http://3.111.221.228";
   useEffect(() => {
     primary_instance.get("/manage_wishlist/").then((res) => {
       console.log(res.data);
@@ -97,6 +100,9 @@ function Wishlist() {
             >
               {vehicles &&
                 vehicles.map((obj) => (
+           
+                  
+               
                   <Col className="gutter-row mb-5" key={obj.id}>
                     {obj.discount && (
                       <div
@@ -121,6 +127,10 @@ function Wishlist() {
                         width: 350,
                       }}
                       cover={
+                        <Link
+                        to={`/vehicle-detail_view/${obj.id}`}
+                        style={{ textDecoration: "none" }}
+                      >
                         <img
                           alt="example"
                           src={base_url + obj.exterior_image}
@@ -128,6 +138,7 @@ function Wishlist() {
                             height: 210,
                           }}
                         />
+                        </Link>
                       }
                       actions={[
                         <div
@@ -211,6 +222,7 @@ function Wishlist() {
                       {/* </Row> */}
                     </Card>
                   </Col>
+                 
                 ))}
             </Row>
           </div>

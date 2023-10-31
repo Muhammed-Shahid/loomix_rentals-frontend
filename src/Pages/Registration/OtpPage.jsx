@@ -36,10 +36,10 @@ function OtpPage({ closeOtpModel, registerUser,phone }) {
       code: code,
       phone:phone
     }
-    axios.post("http://localhost:8000/auth/get_otp/", post_data, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded", 
-        },
+    axios.post("http://3.111.221.228/auth/get_otp/", {post_data:post_data}, {
+      headers: {
+        "Content-Type": "application/json",
+      },
       })
       .then((response) => {
         console.log("Response:", response.data);

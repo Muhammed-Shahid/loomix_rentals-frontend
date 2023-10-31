@@ -50,9 +50,9 @@ function Registration() {
 
   const registerUser = () => {
     axios
-      .post("http://localhost:8000/auth/create_user/", formData, {
+      .post("http://3.111.221.228/auth/create_user/", formData, {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded", 
+          "Content-Type": "application/json",
         },
       })
       .then((response) => {
@@ -77,7 +77,7 @@ function Registration() {
        
       };
       axios
-        .get("http://localhost:8000/auth/get_otp", {
+        .get("http://3.111.221.228/auth/get_otp", {
           params: params,
         })
         .then((response) => {

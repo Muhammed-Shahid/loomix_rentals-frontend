@@ -16,7 +16,7 @@ function ListedVehicles() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const base_url = "http://localhost:8000";
+  const base_url = "http://3.111.221.228";
 
   useEffect(() => {
     if (localStorage.getItem("access_token") === null) {

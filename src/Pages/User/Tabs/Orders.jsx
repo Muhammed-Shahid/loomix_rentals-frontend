@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as ReactDOM from "react-dom";
 import "./Orders.css";
 import { usePDF } from "@react-pdf/renderer";
-import { Progress, Button, Space, Popconfirm, message } from "antd";
+import { Modal, Button, Space, Popconfirm, message, Rate } from "antd";
 import primary_instance from "../../../Components/axios_primary_instance";
 import { MyDocument } from "../../../Components/PdfViewer/pdfViewer";
 import InvoiceGenerator from "../../../Components/InvoiceGenerator";
@@ -17,6 +17,32 @@ function Orders() {
   const [instance, updateInstance] = usePDF({
     document: <MyDocument order={invoiceOrder} />,
   });
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const [comment, setComment] = useState("");
+  const [starValue, setStarValue] = useState(0);
+
+  const reviewSUbmitHandler = () => {};
+
+  const desc = ["terrible", "bad", "normal", "good", "wonderful"];
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    console.log("Clicked cancel button");
+    setOpen(false);
+  };
 
   const handleCancelMsg = () => {
     messageApi.open({
@@ -51,8 +77,6 @@ function Orders() {
       setProducts(res.data.products);
       setorderStatus(res.data.order_status);
     });
-
-   
   }, []);
 
   const orderItemDlt = (ordertoRemove) => {
@@ -81,6 +105,42 @@ function Orders() {
           <div className="col-lg-10 col-xl-10">
             <div className="card" style={{ borderRadius: 10 }}>
               <div className=" px-4 pt-5">
+                <Modal
+                  title="Add a review"
+                  open={open}
+                  onOk={handleOk}
+                  confirmLoading={confirmLoading}
+                  onCancel={handleCancel}
+                >
+                  <div className="border rounded p-3">
+                    
+                      <span>
+                        <Rate
+                          tooltips={desc}
+                          onChange={setStarValue}
+                          value={starValue}
+                        />
+                        {starValue ? (
+                          <span className="ant-rate-text">
+                            {desc[starValue - 1]}
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                      <br />
+                      <br />
+
+                      <textarea
+                        className="form-control"
+                        type="text"
+                        value={comment}
+                        
+                        placeholder="Description"
+                      />
+                    
+                  </div>
+                </Modal>
                 <h5 className="text-muted mb-0 text-left">Your Orders</h5>
               </div>
               {orders &&
@@ -94,7 +154,7 @@ function Orders() {
                           {order.order_status != "Cancelled" && (
                             <InvoiceGenerator order={order} />
                           )}
-                        </div>  
+                        </div>
                         <div className="row">
                           {/* <div className="col-md-3">
                     <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/13.webp" className="img-fluid" alt="Phone" />
@@ -170,6 +230,7 @@ function Orders() {
                           </div>
                         )}
                       </div>
+
                       <div
                         style={{
                           display: "flex",
@@ -177,6 +238,11 @@ function Orders() {
                           alignItems: "center",
                         }}
                       >
+                        {orders && order.order_status == "Delivered" && (
+                          <Space>
+                            <Button onClick={showModal}>Add a review</Button>
+                          </Space>
+                        )}
                         <Space>
                           {orders && order.order_status != "Cancelled" ? (
                             <Popconfirm
