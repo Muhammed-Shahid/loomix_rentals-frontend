@@ -25,7 +25,7 @@ const UserDashboard = (props) => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const base_url = "http://loomix.in";
+  const base_url = "https://loomix.in";
 
   const token = localStorage.getItem("access_token");
 

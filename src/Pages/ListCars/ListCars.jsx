@@ -10,7 +10,7 @@ function ListCars() {
   const [exterior, setExterior] = useState(null);
   const [currentUser, setCurrentUser] = useState("");
   
-  const base_url = "http://loomix.in";
+  const base_url = "https://loomix.in";
   
   const token = localStorage.getItem("access_token");
   
@@ -433,7 +433,7 @@ function ListCars() {
 
             <button class="button mt-5">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="https://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke-width="1.5"

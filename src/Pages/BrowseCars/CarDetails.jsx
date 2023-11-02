@@ -30,7 +30,7 @@ function CarDetails() {
     setMainImage(url);
   };
 
-  const base_url = "http://loomix.in";
+  const base_url = "https://loomix.in";
   const [mainImage, setMainImage] = useState(
     base_url + vehicleDetails.exterior_image
   );

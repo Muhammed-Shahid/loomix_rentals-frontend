@@ -5,7 +5,7 @@ export const Logout = () => {
 const logOut = async () => {
     try {
         const { data } = await axios.post(
-          "http://loomix.in/auth/logout/",
+          "https://loomix.in/auth/logout/",
           {
             refresh_token: localStorage.getItem("refresh_token"),
           },
@@ -24,7 +24,7 @@ const logOut = async () => {
 //     (async () => {
 //       try {
 //         const { data } = await axios.post(
-//           "http://65.0.135.19/auth/logout/",
+//           "https://65.0.135.19/auth/logout/",
 //           {
 //             refresh_token: localStorage.getItem("refresh_token"),
 //           },
