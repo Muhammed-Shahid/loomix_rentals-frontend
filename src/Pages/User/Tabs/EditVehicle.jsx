@@ -15,7 +15,7 @@ function EditVehicle() {
   const [currentUser, setCurrentUser] = useState("");
   const { vehicle_id } = useParams();
 
-  const base_url = "http://3.111.221.228";
+  const base_url = "http://loomix.in";
 
   const token = localStorage.getItem("access_token");
 

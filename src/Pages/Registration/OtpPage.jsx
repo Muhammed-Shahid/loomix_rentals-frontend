@@ -36,7 +36,7 @@ function OtpPage({ closeOtpModel, registerUser,phone }) {
       code: code,
       phone:phone
     }
-    axios.post("http://3.111.221.228/auth/get_otp/", {post_data:post_data}, {
+    axios.post("http://loomix.in/auth/get_otp/", {post_data:post_data}, {
       headers: {
         "Content-Type": "application/json",
       },

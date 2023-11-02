@@ -50,7 +50,7 @@ function Registration() {
 
   const registerUser = () => {
     axios
-      .post("http://3.111.221.228/auth/create_user/", formData, {
+      .post("http://loomix.in/auth/create_user/", formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -77,7 +77,7 @@ function Registration() {
        
       };
       axios
-        .get("http://3.111.221.228/auth/get_otp", {
+        .get("http://loomix.in/auth/get_otp", {
           params: params,
         })
         .then((response) => {

@@ -166,7 +166,7 @@ function Cart(props) {
       bodyData.append("response", JSON.stringify(response));
 
       const response = await axios({
-        url: `http://3.111.221.228/payment/success/`,
+        url: `http://loomix.in/payment/success/`,
         method: "POST",
         data: bodyData,
         headers: {
@@ -229,7 +229,7 @@ function Cart(props) {
     }
 
     const data = await axios({
-      url: `http://3.111.221.228/manage_order/`,
+      url: `http://loomix.in/manage_order/`,
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -297,7 +297,7 @@ function Cart(props) {
       this item from cart ?
     </p>
   );
-  const base_url = "http://3.111.221.228";
+  const base_url = "http://loomix.in";
 
   const selectAddressHandler = (address) => {
     setselectedAddress(address);
@@ -627,10 +627,10 @@ function Cart(props) {
                         {/* Image */}
                         <div className="bg-image hover-overlay hover-zoom ripple rounded">
                           <img
-                            src={base_url + item.exterior_image}
+                            src={base_url+item.exterior_image}
                             className="w-100 rounded"
                             style={{ height: "150px" }}
-                            alt="Blue Jeans Jacket"
+                            alt="Vehicle Image"
                           />
                           <a href="#!">
                             <div

@@ -10,41 +10,50 @@ function Coupons() {
     const params = {
       min_price: min_price,
       coupon_code: couponCode,
-      coupon_discount:couponDiscount
+      coupon_discount: couponDiscount,
     };
     primary_instance.post("/manage_coupons/", { params: params });
   };
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          required
-          type="text"
-          style={{ background: "white" }}
-          placeholder="Coupon Code (10 CHARS)"
-          value={couponCode}
-          onChange={(e) => setCouponCode(e.target.value)}
-        />
-        <input
-          required
-          type="number"
-          style={{ background: "white" }}
-          placeholder="Minimum purchase amount"
-          value={min_price}
-          onChange={(e) => setMin_price(e.target.value)}
-        />
-        <input
-          required
-          type="number"
-          style={{ background: "white" }}
-          placeholder="Coupon discount amount"
-          value={couponDiscount}
-          onChange={(e) => setCouponDiscount(e.target.value)}
-        />
-        <br />
-        <button type="submit" className="btn btn-md btn-dark">
-          Create Coupon
-        </button>
+      <form className="p-3 g-3" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <div className="row  p-2">
+
+          
+          <input
+            className="form-control mt-3 col col-md-6"
+            required
+            type="text"
+            style={{ background: "white" }}
+            placeholder="Coupon Code (10 CHARS)"
+            value={couponCode}
+            onChange={(e) => setCouponCode(e.target.value)}
+          />
+          <input
+            className="form-control mt-3 col col-md-6"
+            required
+            type="number"
+            style={{ background: "white" }}
+            placeholder="Minimum purchase amount"
+            value={min_price}
+            onChange={(e) => setMin_price(e.target.value)}
+          />
+          </div>
+          <input
+            className="form-control mt-3"
+            required
+            type="number"
+            style={{ background: "white" }}
+            placeholder="Coupon discount amount"
+            value={couponDiscount}
+            onChange={(e) => setCouponDiscount(e.target.value)}
+          />
+          <br />
+          <button type="submit" className="btn btn-md btn-dark">
+            Create Coupon
+          </button>
+        </div>
       </form>
     </div>
   );

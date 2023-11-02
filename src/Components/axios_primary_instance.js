@@ -2,7 +2,7 @@ import axios from "axios";
 
 const token = localStorage.getItem("access_token");
 const primary_instance = axios.create({
-  baseURL: "http://3.111.221.228",
+  baseURL: "http://loomix.in",
 
   headers: {
     "Content-Type": "application/json",

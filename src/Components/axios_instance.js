@@ -3,7 +3,7 @@ import axios from 'axios';
 // Create a custom Axios instance with a base URL
 const token=localStorage.getItem('access_token')
 const instance = axios.create({
-  baseURL: 'http://3.111.221.228', 
+  baseURL: 'http://loomix.in', 
   
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',

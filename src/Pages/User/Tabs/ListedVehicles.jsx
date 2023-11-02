@@ -16,7 +16,7 @@ function ListedVehicles() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const base_url = "http://3.111.221.228";
+  const base_url = "http://loomix.in";
 
   useEffect(() => {
     if (localStorage.getItem("access_token") === null) {
@@ -51,9 +51,6 @@ function ListedVehicles() {
     }
   }, []);
 
-  const menuProps = {
-    delete: "delete",
-  };
 
   const dltVehicle = (vehicle_id) => {
     console.log("vehicle_id", vehicle_id);

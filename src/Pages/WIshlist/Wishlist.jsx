@@ -54,7 +54,7 @@ function Wishlist() {
     }
   };
 
-  const base_url = "http://3.111.221.228";
+  const base_url = "http://loomix.in";
   useEffect(() => {
     primary_instance.get("/manage_wishlist/").then((res) => {
       console.log(res.data);
@@ -129,13 +129,13 @@ function Wishlist() {
                       cover={
                         <Link
                         to={`/vehicle-detail_view/${obj.id}`}
-                        style={{ textDecoration: "none" }}
+                        style={{ textDecoration: "none" ,padding:"0"}}
                       >
                         <img
                           alt="example"
                           src={base_url + obj.exterior_image}
                           style={{
-                            height: 210,
+                            height: 260,
                           }}
                         />
                         </Link>

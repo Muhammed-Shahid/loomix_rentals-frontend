@@ -26,23 +26,29 @@ function ListedVehicles() {
   };
 
   const handleOk = () => {
-    if (newDiscount < 0 || newDiscount > 100) {
+    if (
+      newDiscount < 0 ||
+      newDiscount > 100 ||
+      !Number.isInteger(Number(newDiscount))
+    ) {
       setdiscountException(true);
-    } else if (newDiscount > 0 && newDiscount <100){
+    } else if (
+      (newDiscount > 0 && newDiscount < 100) ||
+      Number.isInteger(Number(newDiscount))
+    ) {
       setModalConfirmLoading(true);
 
-     const requestData={
-      vehicle_id:currentVehicleDiscount.vehicle_id,
-      discount:newDiscount
-     }
-     console.log('discounty',requestData.discount); 
-      instance.patch('/vehicles_view/',requestData).then((res)=>{
+      const requestData = {
+        vehicle_id: currentVehicleDiscount.vehicle_id,
+        discount: newDiscount,
+      };
+      console.log("discounty", requestData.discount);
+      instance.patch("/vehicles_view/", requestData).then((res) => {
         console.log(res.data);
         setOpen(false);
         setModalConfirmLoading(false);
-      })
+      });
       console.log(newDiscount);
-
     }
   };
 
@@ -54,7 +60,7 @@ function ListedVehicles() {
   const handleVehicleBlock = (id, boolean) => {
     // e.preventDefault();
     console.log(id, boolean);
-    instance
+    primary_instance
       .put("/admin_controls/manage_vehicles/", {
         vehicle_id: id,
         boolean: boolean,

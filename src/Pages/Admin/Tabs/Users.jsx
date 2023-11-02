@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import instance from "../../../Components/axios_instance";
 import {  message, Popconfirm } from "antd";
+import primary_instance from "../../../Components/axios_primary_instance";
 function Users() {
   const [allUsers, setAllUsers] = useState([]);
   const [reRender, setReRender] = useState(false);
@@ -19,7 +20,7 @@ function Users() {
   const handleUserBlock = (id, boolean) => {
     // e.preventDefault();
     console.log(id, boolean);
-    instance
+    primary_instance
       .put("/admin_controls/manage_user/", { user_id: id, boolean: boolean })
       .then((res) => {
         setReRender(!reRender);

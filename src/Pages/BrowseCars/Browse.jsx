@@ -113,7 +113,7 @@ export default function Browse() {
     setFilterBtn(true);
   };
 
-  const base_url = "http://3.111.221.228";
+  const base_url = "http://loomix.in";
 
   const token = localStorage.getItem("access_token");
 
@@ -200,7 +200,7 @@ export default function Browse() {
     if (!wishlist) {
       console.log(product_id);
       axios
-        .post("http://3.111.221.228/manage_cart/", {
+        .post("http://loomix.in/manage_cart/", {
           params: params,
           headers: {
             "Content-Type": "application/json",
@@ -213,7 +213,7 @@ export default function Browse() {
         });
     } else {
       axios
-        .post("http://3.111.221.228/manage_wishlist/", {
+        .post("http://loomix.in/manage_wishlist/", {
           params: params,
           headers: {
             "Content-Type": "application/json",
