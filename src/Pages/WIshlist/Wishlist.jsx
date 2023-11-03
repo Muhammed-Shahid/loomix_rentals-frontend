@@ -54,7 +54,7 @@ function Wishlist() {
     }
   };
 
-  const base_url = "https://loomix.in";
+  const base_url = "http://localhost:8000";
   useEffect(() => {
     primary_instance.get("/manage_wishlist/").then((res) => {
       console.log(res.data);

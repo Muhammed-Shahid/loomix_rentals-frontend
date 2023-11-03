@@ -25,12 +25,13 @@ function CarDetails() {
   const { Header, Content, Footer, Sider } = Layout;
   const [vehicleDetails, setVehicleDetails] = useState([]);
   const { vehicle_id } = useParams();
-
+  const [emptyReviews, setemptyReviews] = useState(false);
+  const [reviews, setReviews] = useState([]);
   const mainImageHandler = (url) => {
     setMainImage(url);
   };
 
-  const base_url = "https://loomix.in";
+  const base_url = "http://localhost:8000";
   const [mainImage, setMainImage] = useState(
     base_url + vehicleDetails.exterior_image
   );
@@ -49,6 +50,16 @@ function CarDetails() {
         setVehicleDetails(res.data.vehicles[0]);
         setMainImage(res.data.vehicles[0].exterior_image);
       });
+
+    primary_instance.get("/vehicle_rating/", { params: params }).then((res) => {
+      if (res.data.status == 200) {
+        setReviews(res.data.reviews);
+      } else if (res.data.status == 204) {
+        setemptyReviews(true);
+      }
+
+      console.log("reviews", res.data.reviews);
+    });
   }, [vehicle_id]);
 
   return (
@@ -157,7 +168,7 @@ function CarDetails() {
                 >
                   <Image
                     style={{
-                      width: 445,
+                      width: 470,
                       height: 400,
                       borderRadius: 20,
                     }}
@@ -191,25 +202,51 @@ function CarDetails() {
                   maxWidth: "50px",
                   alignItems: "center",
                 }}
-              >
-                <img
-                  className="w-75 m-0"
-                  src={process.env.PUBLIC_URL + "/Images/rupee.svg"}
-                  alt="Rs"
-                />
-                <h3 className="mt-2">{vehicleDetails.price}</h3>
+              ></div>
+              {vehicleDetails.discount ? (
+                <Row style={{ textAlign: "left" }}>
+                  <img
+                    className=" m-0 mb-1"
+                    style={{ width: "40px" }}
+                    src={process.env.PUBLIC_URL + "/Images/rupee.svg"}
+                    alt="Rs"
+                  />
+                  <h2>
+                    {Math.round(
+                      vehicleDetails.price -
+                        (vehicleDetails.price * vehicleDetails.discount) / 100
+                    )}{" "}
+                  </h2>
+
+                  <h2
+                    style={{
+                      marginLeft: "10px",
+                      textDecoration: "line-through",
+                    }}
+                  >
+                    {vehicleDetails.price}{" "}
+                  </h2>
+
+                  <h3>/ day</h3>
+                </Row>
+              ) : (
+                <Row style={{ textAlign: "left" }}>
+                  <h2>{vehicleDetails.price} </h2>
+
+                  <h3>/ day</h3>
+                </Row>
+              )}
+
+              <Row>{vehicleDetails.place}</Row>
+              <Divider />
+
+              <div className="vehicle-description-txt">
+                <p> Fuel Type : {vehicleDetails.fuel_type}</p>
+                <p> Fuel Available : {vehicleDetails.fuel_available} Litres</p>
+                <br />
+
+                <p>Transmission : {vehicleDetails.transmission}</p>
               </div>
-
-              <Divider />
-              <Row></Row>
-
-              <Divider />
-
-              <Row>
-                <h6> {vehicleDetails.place}</h6>
-              </Row>
-
-              <Divider />
 
               <Row
                 gutter={{
@@ -244,7 +281,7 @@ function CarDetails() {
                     Add to cart
                   </Button>
                 </Col>
-                <Col flex="auto">
+                {/* <Col flex="auto">
                   <Button
                     className="product-btn"
                     style={{
@@ -255,7 +292,7 @@ function CarDetails() {
                   >
                     Book now
                   </Button>
-                </Col>
+                </Col> */}
               </Row>
             </Col>
           </Row>
@@ -267,15 +304,34 @@ function CarDetails() {
         style={{ textAlign: "left", marginTop: "150px" }}
       >
         <h4>Reviews</h4>
-        <div className="row g-2 p-3">
-          <div
-            className="col col-md-4 m-2 border rounded "
-            style={{ fontSize: "16px" }}
-          >
-            <p style={{ fontWeight: "500" }}>First Name</p>
-            <p>Star rating </p>
-            <p>Descriptiono</p>
-          </div>
+        <div className="row   p-3">
+          {reviews &&
+            reviews.map((review) => (
+              <div
+                key={review.id}
+                className="col col-md-3 m-2 border rounded p-2"
+                style={{ fontSize: "15px" }}
+              >
+                <p style={{ fontWeight: "500" }}>{review.username}</p>
+                <p>
+                  {" "}
+                  <Rate disabled className="" defaultValue={review.rating} />
+                </p>
+                <p>{review.comment}</p>
+              </div>
+            ))}
+
+          {emptyReviews && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <h6>No reviews for this vehicle</h6>
+            </div>
+          )}
         </div>
       </section>
     </div>

@@ -16,7 +16,7 @@ function ListedVehicles() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const base_url = "https://loomix.in";
+  const base_url = "http://localhost:8000";
 
   useEffect(() => {
     if (localStorage.getItem("access_token") === null) {

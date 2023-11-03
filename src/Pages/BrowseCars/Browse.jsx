@@ -113,7 +113,7 @@ export default function Browse() {
     setFilterBtn(true);
   };
 
-  const base_url = "https://loomix.in";
+  const base_url = "http://localhost:8000";
 
   const token = localStorage.getItem("access_token");
 
@@ -163,9 +163,8 @@ export default function Browse() {
     const params = {
       make: filterData.make,
       location: filterData.location,
-      price_range:filterData.price_range,
+      price_range: filterData.price_range,
       search_param: filterData.search_param,
-
     };
     try {
       axios
@@ -200,7 +199,7 @@ export default function Browse() {
     if (!wishlist) {
       console.log(product_id);
       axios
-        .post("https://loomix.in/manage_cart/", {
+        .post("http://localhost:8000/manage_cart/", {
           params: params,
           headers: {
             "Content-Type": "application/json",
@@ -213,7 +212,7 @@ export default function Browse() {
         });
     } else {
       axios
-        .post("https://loomix.in/manage_wishlist/", {
+        .post("http://localhost:8000/manage_wishlist/", {
           params: params,
           headers: {
             "Content-Type": "application/json",
@@ -273,7 +272,7 @@ export default function Browse() {
   const onSliderChange = (newValue) => {
     setSliderInputValue(newValue);
 
-    console.log('new value' ,newValue);
+    console.log("new value", newValue);
     handleInputChange("price_range", newValue);
   };
   return (
@@ -347,27 +346,36 @@ export default function Browse() {
           </Menu.Item>
         </Menu>
         <Menu>
-          <div style={{ textAlign: "left", marginTop: "5rem", padding: "5px" }}>
-            <p>Price Range</p>
-
+          <div
+            style={{
+              textAlign: "left",
+              marginTop: "5rem",
+              padding: "15px",
+              paddingLeft: "12%",
+              lineHeight:"10px"
+            }}
+          >
+            <h6 >Price Range</h6>
+    
             <Row>
+              <Col>
+                <InputNumber
+                  min={800}
+                  max={10000}
+                  style={{ width: "150px" ,marginBottom:"10px"}}
+                  value={sliderInputValue}
+                  onChange={onSliderChange}
+                />
+              </Col>
               <Col span={12}>
                 <Slider
+                  style={{ width: "140px"}}
                   min={800}
                   max={10000}
                   onChange={onSliderChange}
                   value={
                     typeof sliderInputValue === "number" ? sliderInputValue : 0
                   }
-                />
-              </Col>
-              <Col span={4}>
-                <InputNumber
-                  min={800}
-                  max={10000}
-                  style={{ margin: "0 16px" }}
-                  value={sliderInputValue}
-                  onChange={onSliderChange}
                 />
               </Col>
             </Row>
@@ -405,10 +413,11 @@ export default function Browse() {
               style={{ boxSizing: "border-box", maxWidth: "fit-content" }}
             >
               <Search
-                styles={{ background: "white" }}
+                
                 placeholder="Search make , model , place"
                 onSearch={onSearch}
-                style={{ width: 300 }}
+                style={{ width: 300,background:'white' }}
+                styles={{backgroundColor:'white'}}
               />
             </div>
             <br />
@@ -424,7 +433,7 @@ export default function Browse() {
               {vehicles &&
                 vehicles.map((obj) => (
                   <Col className="gutter-row mb-5" key={obj.id}>
-                    {obj.discount && (
+                    {obj.discount > 0 &&(
                       <div
                         className="offer-tag bg-danger"
                         style={{

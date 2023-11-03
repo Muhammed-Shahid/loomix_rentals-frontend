@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 function NavBar(props) {
   const [visibility, setVisibility] = useState(true);
-  const base_url = "https://loomix.in";
+  const base_url = "http://localhost:8000";
   const [currentUser, setCurrentUser] = useState("");
 
   const cart_url = "/cart/";

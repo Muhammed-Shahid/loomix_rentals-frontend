@@ -19,24 +19,44 @@ function Orders() {
   });
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-
-  const [comment, setComment] = useState("");
+  
+  const [ratingVehicle, setRatingVehicle] = useState('')
+  const [reviewTxt, setReviewTxt] = useState("");
   const [starValue, setStarValue] = useState(0);
-
-  const reviewSUbmitHandler = () => {};
-
-  const desc = ["terrible", "bad", "normal", "good", "wonderful"];
+  const [reviewModlException, setReviewModlException] = useState(false);
+  // star value descriptions
+  const starValueDescriptions = [
+    "terrible",
+    "bad",
+    "normal",
+    "good",
+    "wonderful",
+  ];
 
   const showModal = () => {
     setOpen(true);
+  
   };
 
-  const handleOk = () => {
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+  const reviewSubmitHandler = () => {
+    if (reviewTxt != "" && starValue > 0) {
+      setReviewModlException(false);
+      setConfirmLoading(true);
+      const params = {
+        ratingVehicle,
+        starValue,
+        reviewTxt
+      };
+      console.log(params);
+      primary_instance.post("vehicle_rating/",{params}).then((res)=>{
+        console.log(res.data.value);
+        setOpen(false)
+        setConfirmLoading(false)
+      });
+    
+    } else {
+      setReviewModlException(true);
+    }
   };
 
   const handleCancel = () => {
@@ -55,20 +75,20 @@ function Orders() {
     });
   };
 
-  const handleInvoicePrint = (order_id) => {
-    const order = orders.find((obj) => obj.id === order_id);
-    console.log(order);
-    setInvoiceView(true);
-    setInvoiceOrder(order);
+  // const handleInvoicePrint = (order_id) => {
+  //   const order = orders.find((obj) => obj.id === order_id);
+  //   console.log(order);
+  //   setInvoiceView(true);
+  //   setInvoiceOrder(order);
 
-    const downloadLInk = document.createElement("a");
-    downloadLInk.href = instance.url;
-    downloadLInk.download = `order-${order_id}_invoice.pdf`;
+  //   const downloadLInk = document.createElement("a");
+  //   downloadLInk.href = instance.url;
+  //   downloadLInk.download = `order-${order_id}_invoice.pdf`;
 
-    downloadLInk.click();
+  //   downloadLInk.click();
 
-    window.location.reload();
-  };
+  //   window.location.reload();
+  // };
 
   useEffect(() => {
     primary_instance.get("/manage_order/").then((res) => {
@@ -108,38 +128,40 @@ function Orders() {
                 <Modal
                   title="Add a review"
                   open={open}
-                  onOk={handleOk}
+                  onOk={reviewSubmitHandler}
                   confirmLoading={confirmLoading}
                   onCancel={handleCancel}
                 >
                   <div className="border rounded p-3">
-                    
-                      <span>
-                        <Rate
-                          tooltips={desc}
-                          onChange={setStarValue}
-                          value={starValue}
-                        />
-                        {starValue ? (
-                          <span className="ant-rate-text">
-                            {desc[starValue - 1]}
-                          </span>
-                        ) : (
-                          ""
-                        )}
-                      </span>
-                      <br />
-                      <br />
-
-                      <textarea
-                        className="form-control"
-                        type="text"
-                        value={comment}
-                        
-                        placeholder="Description"
+                    <span>
+                      <Rate
+                        tooltips={starValueDescriptions}
+                        onChange={setStarValue}
+                        value={starValue}
                       />
-                    
+                      {starValue ? (
+                        <span className="ant-rate-text">
+                          {starValueDescriptions[starValue - 1]}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </span>
+                    <br />
+                    <br />
+
+                    <textarea
+                      className="form-control"
+                      type="text"
+                      value={reviewTxt}
+                      onChange={(e) => setReviewTxt(e.target.value)}
+                      placeholder="Description"
+                    />
                   </div>
+
+                  {reviewModlException && (
+                    <h6 className="text-primary mt-2">Please provide both review parameters</h6>
+                  )}
                 </Modal>
                 <h5 className="text-muted mb-0 text-left">Your Orders</h5>
               </div>
@@ -240,7 +262,7 @@ function Orders() {
                       >
                         {orders && order.order_status == "Delivered" && (
                           <Space>
-                            <Button onClick={showModal}>Add a review</Button>
+                            <Button onClick={()=>{ showModal() ; setRatingVehicle(order.product) } }>Add a review</Button>
                           </Space>
                         )}
                         <Space>
