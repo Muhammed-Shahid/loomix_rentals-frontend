@@ -104,7 +104,7 @@ function Wishlist() {
                   
                
                   <Col className="gutter-row mb-5" key={obj.id}>
-                    {obj.discount && (
+                    {obj.discount>0 && (
                       <div
                         className="offer-tag bg-danger"
                         style={{
@@ -136,6 +136,7 @@ function Wishlist() {
                           src={base_url + obj.exterior_image}
                           style={{
                             height: 260,
+                            width:'100%',
                           }}
                         />
                         </Link>

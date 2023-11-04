@@ -214,9 +214,9 @@ function Cart(props) {
     bodyData.append("days", rented_days_count);
     bodyData.append("shipping_address_id", selectedAddress.id);
 
-    if (couponDiscount !='') {
-      bodyData.append('coupon_discount',couponDiscount)
-    }
+   
+    bodyData.append('coupon_discount',couponDiscount)
+    
 
     if (paymentMethod == "gateway") {
       const res = await loadScript();
@@ -605,24 +605,7 @@ function Cart(props) {
                 {cartItems &&
                   cartItems.map((item) => (
                     <div className="row p-2 mb-3">
-                      {item.discount && (
-                        <div
-                          className="offer-tag bg-danger"
-                          style={{
-                            position: "absolute",
-                            top: "0px",
-                            right: "0",
-                            zIndex: "100",
-                            color: "white",
-                            width: "5rem",
-                            borderTopRightRadius: "8px",
-                            borderBottomLeftRadius: "8px",
-                            height: "20px",
-                          }}
-                        >
-                          <h6>-{item.discount}%</h6>
-                        </div>
-                      )}
+                
                       <div className="col-lg-3 col-md-12 mb-4 mb-lg-0 ">
                         {/* Image */}
                         <div className="bg-image hover-overlay hover-zoom ripple rounded">
@@ -648,11 +631,28 @@ function Cart(props) {
                         style={{ textAlign: "left" }}
                       >
                         {/* Data */}
-                        <p>
-                          <strong>
-                            {item.make} {item.model}
-                          </strong>
-                        </p>
+                        <div className="row">
+                          <div className="col col-md-6">
+                            <p>
+                              <strong>
+                                {item.make} {item.model}
+                              </strong>
+                            </p>
+                          </div>
+                          <div className="col col-md-3 " style={{textAlign:'left'}}>
+                            {item.discount > 0 && (
+                              <div
+                                className="offer-tag"
+                                style={{
+                                  color: "red",
+                                  
+                                }}
+                              >
+                                <h6>-{item.discount}%</h6>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                         <p>{}</p>
                         <p>{item.place}</p>
 
