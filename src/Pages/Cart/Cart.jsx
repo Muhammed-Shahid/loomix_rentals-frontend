@@ -37,7 +37,7 @@ function Cart(props) {
   // coupon
   const [couponRequiredPrice, setCouponRequiredPrice] = useState("");
   const [couponCodeError, setcouponCodeError] = useState(false);
-  const [couponDiscount, setcouponDiscount] = useState("");
+  const [couponDiscount, setcouponDiscount] = useState(0);
   const [couponApplyBtn, setcouponApplyBtn] = useState(true)
   const dateFormat = "YYYY/MM/DD";
   const access_token = localStorage.getItem("access_token");
