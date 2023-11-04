@@ -60,6 +60,7 @@ function ListCars() {
     fuel_available: 0,
     place: "",
     price: "",
+    availability:true,
 
     // Add more fields as needed
   });
