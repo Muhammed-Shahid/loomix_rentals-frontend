@@ -8,6 +8,7 @@ import {
   Button as BUTTON,
   message,
   Modal,
+  Popconfirm,
 } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
 import primary_instance from "../../../Components/axios_primary_instance";
@@ -264,12 +265,13 @@ export const ProfileTab = (userData) => {
 
 export const AddressTab = ({ userAddress, successMessage }) => {
   const [isFormDisabled, setIsFormDisabled] = useState(true);
-  const addressDetails = userAddress;
+  const [addressDetails, setaddressDetails] = useState(userAddress);
   const [newAddressForm, setnewAddressForm] = useState(false);
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalContent, setModalContent] = useState("");
   const [editableAddress, seteditableAddress] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
   const [formData, setFormData] = useState({
     phone: "",
     house_name: "",
@@ -307,125 +309,122 @@ export const AddressTab = ({ userAddress, successMessage }) => {
     const { name, value } = e.target;
 
     setEditedAddressData({
-      ...formData,
+      ...editedAddressData,
       [name]: value,
     });
   };
- useEffect(() => {
-  setModalContent(
-    <div className="modalFormWrapper">
-      <Row
-        gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-        style={{ width: "80%" }}
-      >
-        <Col flex="auto">
-          <Space
-            direction="vertical"
-            size="large"
-            style={{ display: "flex" }}
-          >
-            <Input
-              name="house_name"
-              required
-              className="form-control mt-3"
+  useEffect(() => {
+    setModalContent(
+      <div className="modalFormWrapper">
+        <Row
+          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+          style={{ width: "80%" }}
+        >
+          <Col flex="auto">
+            <Space
+              direction="vertical"
               size="large"
-              value={editedAddressData.house_name}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.house_name}
-            ></Input>
+              style={{ display: "flex" }}
+            >
+              <Input
+                id="house_name"
+                name="house_name"
+                required
+                className="form-control mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.house_name}
+              ></Input>
 
-            <Input
-              name="street"
-              required
-              className="form-control mt-3"
-              size="large"
-              value={editedAddressData.street}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.street}
-            ></Input>
+              <Input
+                id="street"
+                name="street"
+                required
+                className="form-control mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.street}
+              ></Input>
 
-            <Input
-              required
-              name="place"
-              className="form-control mt-3"
-              size="large"
-              value={editedAddressData.place}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.place}
-            ></Input>
+              <Input
+                required
+                name="place"
+                className="form-control mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.place}
+              ></Input>
 
-            <Input
-              name="city"
-              required
-              className="form-control mt-3"
-              size="large"
-              value={editedAddressData.city}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.city}
-            ></Input>
-          </Space>
-        </Col>
+              <Input
+                name="city"
+                required
+                className="form-control mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.city}
+              ></Input>
+            </Space>
+          </Col>
 
-        <Col flex="auto">
-          <Space
-            direction="vertical"
-            size="large"
-            style={{ display: "flex" }}
-          >
-            <Input
-              name="state"
-              required
-              className="form-control mt-3"
+          <Col flex="auto">
+            <Space
+              direction="vertical"
               size="large"
-              value={editedAddressData.state}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.state}
-            ></Input>
-            <Input
-              name="land_mark"
-              className="form-control mt-3"
-              size="large"
-              value={editedAddressData.land_mark}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.land_mark}
-            ></Input>
-            <Input
-              name="postal_code"
-              required
-              className="form-control  mt-3"
-              size="large"
-              value={editedAddressData.postal_code}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.postal_code}
-            ></Input>
+              style={{ display: "flex" }}
+            >
+              <Input
+                name="state"
+                required
+                className="form-control mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.state}
+              ></Input>
+              <Input
+                name="land_mark"
+                className="form-control mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.land_mark}
+              ></Input>
+              <Input
+                name="postal_code"
+                required
+                className="form-control  mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.postal_code}
+              ></Input>
 
-            <Input
-              name="phone"
-              required
-              className="form-control mt-3"
-              size="large"
-              value={editedAddressData.phone}
-              onChange={handleInputChange}
-              placeholder={editedAddressData.phone}
-            ></Input>
-          </Space>
-        </Col>
-      </Row>
-    </div>
-  );
- }, [editedAddressData])
- 
+              <Input
+                name="phone"
+                required
+                className="form-control mt-3"
+                size="large"
+                onChange={EditAddressInputChange}
+                placeholder={editableAddress.phone}
+              ></Input>
+            </Space>
+          </Col>
+        </Row>
+      </div>
+    );
+  }, [editedAddressData, open, editableAddress]);
+
   const ShowModal = () => {
-
     setOpen(true);
   };
 
-  const handleOk = () => {
+  const handleEditedAddressSubmit = () => {
     setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
+    const params = {
+      address_data: editedAddressData,
+      address_id: editableAddress.id,
+    };
+    primary_instance.patch("auth/manage_address/", params).then((res) => {
       setConfirmLoading(false);
-    }, 2000);
+      setOpen(false);
+    });
   };
 
   const handleCancel = () => {
@@ -449,13 +448,45 @@ export const AddressTab = ({ userAddress, successMessage }) => {
   const handleNewAddressSubmit = (e) => {
     e.preventDefault();
 
-    instance.post("/auth/manage_address/", formData).then((res) => {
+    primary_instance.post("/auth/manage_address/", formData).then((res) => {
       console.log(res.data);
 
       successMessage();
+      successMessage();
+      setnewAddressForm(false);
     });
   };
 
+  const addressDeleteError = () => {
+    messageApi.open({
+      type: "error",
+
+      content: "This address is used in incomplete orders",
+    });
+  };
+
+  const handleDeleteAddress = (address_id) => {
+    primary_instance
+      .put("auth/manage_address/", { address_id: address_id })
+      .then((res) => {
+        console.log(res);
+        if (res.status == 226 || res.status != 200) {
+          addressDeleteError();
+          addressDeleteError();
+        }
+        if (res.status == 200) {
+          const updatedArray = addressDetails.filter(
+            (address) => address.id !== address_id
+          );
+          setaddressDetails(updatedArray);
+        }
+      });
+  };
+
+  const cancelDeletePop = (e) => {
+    console.log(e);
+    message.error("Click on No");
+  };
   return (
     <div>
       <div
@@ -488,7 +519,7 @@ export const AddressTab = ({ userAddress, successMessage }) => {
           ADD NEW ADDRESS
         </BUTTON>
       </div>
-
+      <div style={{ position: "absolute", top: "200px" }}>{contextHolder}</div>
       {newAddressForm && (
         <form onSubmit={handleNewAddressSubmit}>
           <Row
@@ -614,18 +645,18 @@ export const AddressTab = ({ userAddress, successMessage }) => {
       )}
 
       <Modal
-        title="Title"
+        title="Edit Address"
         open={open}
-        onOk={handleOk}
+        onOk={handleEditedAddressSubmit}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <p>{modalContent}</p>
+        <div>{modalContent}</div>
       </Modal>
-      <div className="row mt-5">
+      <div className="row mt-5 g-4">
         {addressDetails &&
           addressDetails.map((address) => (
-            <div className="col">
+            <div className="col col-md-3 ">
               <Card style={{ textAlign: "left" }}>
                 <Card.Body style={{ height: "12rem" }}>
                   <Card.Title>{address.house_name}</Card.Title>
@@ -650,12 +681,27 @@ export const AddressTab = ({ userAddress, successMessage }) => {
                       right: "3px",
                     }}
                   >
-                    <BUTTON onClick={() => {seteditableAddress(address) ;ShowModal()}} type="link">
+                    <BUTTON
+                      onClick={() => {
+                        seteditableAddress(address);
+                        ShowModal();
+                      }}
+                      type="link"
+                    >
                       Edit
                     </BUTTON>{" "}
-                    <BUTTON type="link" danger>
-                      Delete
-                    </BUTTON>
+                    <Popconfirm
+                      title="Delete Address"
+                      description="Are you sure to delete this address?"
+                      onConfirm={() => handleDeleteAddress(address.id)}
+                      onCancel={cancelDeletePop}
+                      okText="Yes"
+                      cancelText="No"
+                    >
+                      <BUTTON type="link" danger>
+                        Delete
+                      </BUTTON>
+                    </Popconfirm>
                   </div>
                 </Card.Body>
               </Card>
