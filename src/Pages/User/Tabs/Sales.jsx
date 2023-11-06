@@ -40,7 +40,7 @@ function Sales() {
           <div className="col-lg-10 col-xl-10">
             <div className="card" style={{ borderRadius: 10 }}>
               <div className=" px-4 pt-5">
-                <h5 className="text-muted mb-0 text-left">Your Orders</h5>
+                <h5 className="text-muted mb-0 text-left">Your Sales</h5>
               </div>
               {orders &&
                 orders.map((order, index) => (
