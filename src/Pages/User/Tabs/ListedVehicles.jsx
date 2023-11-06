@@ -51,21 +51,25 @@ function ListedVehicles() {
     }
   }, []);
 
-
   const dltVehicle = (vehicle_id) => {
     console.log("vehicle_id", vehicle_id);
 
     instance.put("/vehicles_view/", { vehicle_id: vehicle_id }).then((res) => {
       console.log(res);
 
-      const updatedVehicles = vehicles.filter(vehicle => vehicle.id !== vehicle_id);
-      setVehicles(updatedVehicles)
+      const updatedVehicles = vehicles.filter(
+        (vehicle) => vehicle.id !== vehicle_id
+      );
+      setVehicles(updatedVehicles);
     });
   };
 
   return (
     <div>
-      <div className="heading w-100" style={{ textAlign: "left" ,height:'80vh'}}>
+      <div
+        className="heading w-100"
+        style={{ textAlign: "left", height: "80vh" }}
+      >
         <h2>Listed Vehicles</h2>
         <table class="table">
           <thead>
@@ -74,7 +78,7 @@ function ListedVehicles() {
               <th scope="col">ID</th>
               <th scope="col">Vehicle Name</th>
               <th scope="col">License Plate</th>
-              <th scope="col">On Rent</th>
+
               <th scope="col">Availability</th>
               <th scope="col">Manage Vehicle</th>
             </tr>
@@ -90,7 +94,7 @@ function ListedVehicles() {
                     {vehicle.make} {vehicle.model}
                   </td>
                   <td>{vehicle.vehicle_number}</td>
-                  <td>Yes</td>
+
                   {!vehicle.availability ? (
                     <td>Not Available</td>
                   ) : (
@@ -119,12 +123,9 @@ function ListedVehicles() {
                           description="Are you sure to remove this vehicle ?"
                           okText="Remove"
                           cancelText="No"
-                          onConfirm={()=>dltVehicle(vehicle.id)}
+                          onConfirm={() => dltVehicle(vehicle.id)}
                         >
-                          <p
-                            
-                            className="manage-dropdown-content text-danger"
-                          >
+                          <p className="manage-dropdown-content text-danger">
                             Delete
                           </p>
                         </Popconfirm>
