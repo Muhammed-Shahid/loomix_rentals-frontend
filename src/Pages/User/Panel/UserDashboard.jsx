@@ -16,6 +16,7 @@ import Account from "../Tabs/Account";
 import Orders from "../Tabs/Orders";
 import Sales from "../Tabs/Sales";
 import Wallet from "../Tabs/Wallet";
+import Notifications from "../Tabs/Notifications";
 
 const { Header, Sider, Content } = Layout;
 
