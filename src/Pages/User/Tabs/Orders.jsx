@@ -120,7 +120,7 @@ function Orders() {
     <div>
       {contextHolder}
 
-      <div className="container  h-100">
+      <div className="container " style={{ height: "80vh" }}>
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-lg-10 col-xl-10">
             <div className="card" style={{ borderRadius: 10 }}>

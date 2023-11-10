@@ -7,6 +7,7 @@ import {
   CarOutlined,
   ContainerOutlined,
   WalletOutlined,
+  NotificationOutlined
 } from "@ant-design/icons";
 import { Layout, Menu, Button, theme } from "antd";
 import axios from "axios";
@@ -46,6 +47,9 @@ const UserDashboard = (props) => {
         return <Wallet auth_token={token} user={props.user} />;
       case "sales":
         return <Sales auth_token={token} />;
+
+        case "notifications":
+          return <Notifications auth_token={token} />;
 
       // Add more cases for other components as needed
       default:
@@ -129,6 +133,15 @@ const UserDashboard = (props) => {
             title="Sales"
           >
             Sales
+          </Menu.Item>
+
+          <Menu.Item
+            onClick={() => setTabName("notifications")}
+            key={6}
+            icon={<NotificationOutlined />}
+            title="Notifications"
+          >
+            Notifications
           </Menu.Item>
         </Menu>
       </Sider>

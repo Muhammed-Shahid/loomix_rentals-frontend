@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Modal, Button as BUTTON } from "antd";
 import primary_instance from "../../../Components/axios_primary_instance";
+import { Link } from "react-router-dom";
 
 function ListedVehicles() {
   const [allVehicles, setAllVehicles] = useState([]);
@@ -144,7 +145,14 @@ function ListedVehicles() {
                   >
                     Discounts
                   </Dropdown.Item>
-                  <Dropdown.Item>View Details</Dropdown.Item>
+                  <Dropdown.Item>
+                  <Link to={`/vehicle_admin_view/${vehicle.id}`}style={{textDecoration:"none"}} >
+                    <p >
+                    View Details
+
+                    </p>
+                    </Link>
+                    </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>

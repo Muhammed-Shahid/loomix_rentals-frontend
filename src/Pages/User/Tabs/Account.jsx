@@ -174,7 +174,7 @@ export const ProfileTab = (userData) => {
               <Col flex="auto">
                 {userDetails && (
                   <Input
-                    name="lasttName"
+                    name="lastName"
                     className="form-control user-edit-input mt-3"
                     size="large"
                     disabled={isFormDisabled}

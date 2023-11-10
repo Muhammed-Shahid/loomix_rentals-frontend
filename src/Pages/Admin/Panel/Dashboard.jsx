@@ -12,6 +12,7 @@ import Users from "../Tabs/Users";
 import ListedVehicles from "../Tabs/ListedVehicles";
 import Analytics from "../Tabs/Analytics";
 import Coupons from "../Tabs/Coupons";
+import PendingVerifications from "../Tabs/PendingVerifications";
 
 const Dashboard = () => {
   const [tabName, setTabName] = useState("user");
@@ -26,6 +27,8 @@ const Dashboard = () => {
         return <Analytics />;
       case "coupon":
           return <Coupons/>;
+      case "verifications":
+            return <PendingVerifications/>;
 
       default:
         return null;
@@ -72,6 +75,15 @@ const Dashboard = () => {
               >
                 <CDBSidebarMenuItem icon="chart-line">
                   Analytics
+                </CDBSidebarMenuItem>
+              </NavLink>
+
+              <NavLink
+                activeClassName="activeClicked"
+                onClick={() => setTabName("verifications")}
+              >
+                <CDBSidebarMenuItem icon="">
+                  Pending Verifications
                 </CDBSidebarMenuItem>
               </NavLink>
 

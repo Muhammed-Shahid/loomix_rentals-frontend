@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image } from "react-bootstrap";
+import { message, Modal } from "antd";
 import "./ListCars.css";
 import axios from "axios";
 function ListCars() {
@@ -9,14 +10,28 @@ function ListCars() {
   const [interior, setInterior] = useState(null);
   const [exterior, setExterior] = useState(null);
   const [currentUser, setCurrentUser] = useState("");
-  
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+    window.location.reload();
+  };
+
+  const handleCancel = () => {
+    window.location.replace("/browse");
+    setIsModalOpen(false);
+  };
+
   const base_url = "https://loomix.in";
-  
+
   const token = localStorage.getItem("access_token");
-  
 
   useEffect(() => {
-
     if (token != null) {
       axios
         .get(`${base_url}/auth/current_user/`, {
@@ -33,11 +48,8 @@ function ListCars() {
           console.error(error);
         });
     }
-  }, [])
-  
-  
-  
-  
+  }, []);
+
   const fuelChnageHandler = () => {
     setFuel(!fuel);
     console.log(fuel);
@@ -48,7 +60,7 @@ function ListCars() {
   if (fuel) {
     fuelAmountField = "";
   }
-  
+
   const [formData, setFormData] = useState({
     // Initialize the form data object with default values
     vehicle_number: "",
@@ -60,7 +72,8 @@ function ListCars() {
     fuel_available: 0,
     place: "",
     price: "",
-    availability:true,
+    availability: true,
+    is_verified:false,
 
     // Add more fields as needed
   });
@@ -79,7 +92,6 @@ function ListCars() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-
     const request_data = new FormData();
 
     for (const key in formData) {
@@ -88,14 +100,13 @@ function ListCars() {
         request_data.append(`${key}`, `${value}`);
       }
     }
-    console.log('current user id',currentUser.user_id);
+    console.log("current user id", currentUser.user_id);
 
     request_data.append("rc_book", rcBook);
     request_data.append("pollution_certificate", pollution);
     request_data.append("exterior_image", exterior);
     request_data.append("interior_image", interior);
     request_data.append("owner", currentUser.user_id);
-
 
     for (var pair of request_data.entries()) {
       console.log(pair[0] + " - " + pair[1]);
@@ -109,10 +120,17 @@ function ListCars() {
         },
       })
       .then((response) => {
-        console.log("File uploaded successfully:", response.data);
+        if (response.status == 201) {
+          console.log("File uploaded successfully:", response.data);
+          showModal();
+        }
+        else{
+          window.alert('Please fill all the fields')
+        }
       })
-      .catch((error) => {
-        console.error("Error uploading file:", error);
+      .catch((err) => {
+        console.log("Error uploading file:", err);
+
       });
   };
 
@@ -129,6 +147,18 @@ function ListCars() {
 
           <br />
           <br />
+          <Modal
+          centered
+          closeIcon={false}
+            title="Vehicle Added Successfully"
+            open={isModalOpen}
+            okText="Add another vehicle"
+            onOk={handleOk}
+            cancelText='Go back to home'
+            onCancel={handleCancel}
+          >
+            <h6>Your Vehicle will be listed after document verification</h6>
+          </Modal>
           <form onSubmit={handleSubmit}>
             <div className="form-row row">
               <div className="form-group col-md-4">
@@ -450,6 +480,7 @@ function ListCars() {
 
               <div class="text">Submit Details</div>
             </button>
+     
           </form>
         </div>
       </div>
