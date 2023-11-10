@@ -20,6 +20,7 @@ import { useState } from "react";
 import InvoiceGenerator from "./Components/InvoiceGenerator";
 import { ExcelGenerator } from "./Components/ExcelGenerator";
 import Wishlist from "./Pages/WIshlist/Wishlist";
+import AdminVehicleView from "./Pages/Admin/AdminVehicleView";
 
 function App() {
   const [user, setUser] = useState([]);
@@ -75,6 +76,10 @@ function App() {
     {
       path: "/wishlist",
       element: <Wishlist />,
+    },
+    {
+      path: "/vehicle_admin_view/:vehicle_id",
+      element: <AdminVehicleView />,
     },
   ]);
 
