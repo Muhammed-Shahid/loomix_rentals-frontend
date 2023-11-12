@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image } from "react-bootstrap";
+import { Image } from "antd";
 import "./EditVehicle.css";
 import axios from "axios";
 import primary_instance from "../../../Components/axios_primary_instance";
@@ -109,7 +109,7 @@ function EditVehicle() {
     request_data.append("rc_book", rcBook);
     request_data.append("pollution_certificate", pollution);
     request_data.append("exterior_image", exterior);
-    request_data.append("interior _image", interior);
+    request_data.append("interior_image", interior);
     request_data.append("owner", currentUser.user_id);
 
     for (var pair of request_data.entries()) {
@@ -332,7 +332,7 @@ function EditVehicle() {
                         <Image
                           style={{ maxWidth: "30%" }}
                           src={
-                            process.env.PUBLIC_URL + "./Images/upload-icon.png"
+                            base_url+vehicle.rc_book
                           }
                           fluid
                           alt="upload file"
@@ -346,7 +346,7 @@ function EditVehicle() {
                           onChange={(e) => setRcBook(e.target.files[0])}
                         />
                         <p>
-                          Click to <br /> Upload
+                          Click to <br /> Upload 
                         </p>
                         <p>RC Book</p>
 
@@ -364,7 +364,7 @@ function EditVehicle() {
                         <Image
                           style={{ maxWidth: "30%" }}
                           src={
-                            process.env.PUBLIC_URL + "./Images/upload-icon.png"
+                            base_url+vehicle.pollution_certificate
                           }
                           fluid
                           alt="upload file"
@@ -396,7 +396,7 @@ function EditVehicle() {
                         <Image
                           style={{ maxWidth: "30%" }}
                           src={
-                            process.env.PUBLIC_URL + "./Images/upload-icon.png"
+                           base_url+vehicle.exterior_image
                           }
                           fluid
                           alt="upload file"
@@ -427,7 +427,8 @@ function EditVehicle() {
                         <Image
                           style={{ maxWidth: "30%" }}
                           src={
-                            process.env.PUBLIC_URL + "./Images/upload-icon.png"
+                            base_url+vehicle.interior_image
+
                           }
                           fluid
                           alt="upload file"

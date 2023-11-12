@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
-import * as ReactDOM from "react-dom";
+import { Link } from "react-router-dom";
+
 import "./Orders.css";
 import { usePDF } from "@react-pdf/renderer";
-import { Modal, Button, Space, Popconfirm, message, Rate } from "antd";
+import {
+  Modal,
+  Button,
+  Space,
+  Popconfirm,
+  message,
+  Rate,
+  List,
+  Pagination,
+} from "antd";
 import primary_instance from "../../../Components/axios_primary_instance";
 import { MyDocument } from "../../../Components/PdfViewer/pdfViewer";
 import InvoiceGenerator from "../../../Components/InvoiceGenerator";
@@ -19,8 +29,8 @@ function Orders() {
   });
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  
-  const [ratingVehicle, setRatingVehicle] = useState('')
+
+  const [ratingVehicle, setRatingVehicle] = useState("");
   const [reviewTxt, setReviewTxt] = useState("");
   const [starValue, setStarValue] = useState(0);
   const [reviewModlException, setReviewModlException] = useState(false);
@@ -33,9 +43,14 @@ function Orders() {
     "wonderful",
   ];
 
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 4, // adjust as needed
+    total: 0,
+  });
+
   const showModal = () => {
     setOpen(true);
-  
   };
 
   const reviewSubmitHandler = () => {
@@ -45,15 +60,14 @@ function Orders() {
       const params = {
         ratingVehicle,
         starValue,
-        reviewTxt
+        reviewTxt,
       };
       console.log(params);
-      primary_instance.post("vehicle_rating/",{params}).then((res)=>{
+      primary_instance.post("vehicle_rating/", { params }).then((res) => {
         console.log(res.data.value);
-        setOpen(false)
-        setConfirmLoading(false)
+        setOpen(false);
+        setConfirmLoading(false);
       });
-    
     } else {
       setReviewModlException(true);
     }
@@ -90,14 +104,29 @@ function Orders() {
   //   window.location.reload();
   // };
 
-  useEffect(() => {
-    primary_instance.get("/manage_order/").then((res) => {
+  const fetchOrders = async (page, pageSize) => {
+    const params = {
+      page: page,
+      items_per_page:pageSize
+    };
+    primary_instance.get("/manage_order/",{params:params}).then((res) => {
       console.log(res.data);
       setOrders(res.data.orders);
       setProducts(res.data.products);
       setorderStatus(res.data.order_status);
+      setPagination({ ...pagination, total: res.data.total_orders });
+
     });
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchOrders(pagination.current, pagination.pageSize);
+  }, [pagination.current, pagination.pageSize]);
+
+  // Function to handle pagination change
+  const handlePaginationChange = (page, pageSize) => {
+    setPagination({ ...pagination, current: page, pageSize });
+  };
 
   const orderItemDlt = (ordertoRemove) => {
     const indexToUpdate = orders.findIndex((obj) => obj.id === ordertoRemove);
@@ -120,7 +149,10 @@ function Orders() {
     <div>
       {contextHolder}
 
-      <div className="container " style={{ height: "80vh" }}>
+      <div
+        className="container "
+        style={{ height: "fit-content", minHeight: "80vh" }}
+      >
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-lg-10 col-xl-10">
             <div className="card" style={{ borderRadius: 10 }}>
@@ -160,7 +192,9 @@ function Orders() {
                   </div>
 
                   {reviewModlException && (
-                    <h6 className="text-primary mt-2">Please provide both review parameters</h6>
+                    <h6 className="text-primary mt-2">
+                      Please provide both review parameters
+                    </h6>
                   )}
                 </Modal>
                 <h5 className="text-muted mb-0 text-left">Your Orders</h5>
@@ -256,13 +290,23 @@ function Orders() {
                       <div
                         style={{
                           display: "flex",
-                          justifyContent: "end",
+                          justifyContent: "space-between",
                           alignItems: "center",
                         }}
                       >
+                        <Link to={`/order_details/${order.id}`}>
+                        <Button className="mb-2" style={{marginRight:'auto',marginLeft:"10px"}} >View Details</Button>
+                        </Link>
                         {orders && order.order_status == "Delivered" && (
                           <Space>
-                            <Button onClick={()=>{ showModal() ; setRatingVehicle(order.product) } }>Add a review</Button>
+                            <Button
+                              onClick={() => {
+                                showModal();
+                                setRatingVehicle(order.product);
+                              }}
+                            >
+                              Add a review
+                            </Button>
                           </Space>
                         )}
                         <Space>
@@ -291,6 +335,17 @@ function Orders() {
             </div>
           </div>
         </div>
+
+        <Pagination
+          current={pagination.current}
+          pageSize={pagination.pageSize}
+          total={pagination.total}
+          onChange={handlePaginationChange}
+      
+          showTotal={(total, range) =>
+            `${range[0]}-${range[1]} of ${total} orders`
+          }
+        />
       </div>
     </div>
   );

@@ -12,3 +12,20 @@
 .vehicle-description-txt{
     font-size:medium ;
 }
+
+.search-input{
+    background-color: white;
+    
+}
+.search-input:focus{
+    background-color: white;
+    background: white;
+}
+.search-input::after{
+    background-color: white;
+    background: white;
+}
+.search-input:active{
+    background-color: white;
+    background: white;
+}

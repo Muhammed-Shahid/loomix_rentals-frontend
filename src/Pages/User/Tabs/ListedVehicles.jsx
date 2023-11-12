@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Button, theme, Popconfirm } from "antd";
+import { Layout, Button, theme, Popconfirm, Popover, Divider } from "antd";
 
 import "./ListedVehicles.css";
-import { DownOutlined } from "@ant-design/icons";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 import axios from "axios";
 import instance from "../../../Components/axios_instance";
+import primary_instance from "../../../Components/axios_primary_instance";
 const { Header, Sider, Content } = Layout;
 
 function ListedVehicles() {
@@ -16,7 +17,7 @@ function ListedVehicles() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const base_url = "https://loomix.in";
+  
 
   useEffect(() => {
     if (localStorage.getItem("access_token") === null) {
@@ -26,17 +27,8 @@ function ListedVehicles() {
         const params = {
           user_specific: true,
         };
-        axios
-          .get(
-            `${base_url}/vehicles_view/`,
-            { params: params },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${auth_token}`,
-              },
-            }
-          )
+        primary_instance
+          .get(`/vehicles_view/`, { params: params })
           .then((res) => {
             setVehicles(res.data.vehicles);
 
@@ -64,6 +56,28 @@ function ListedVehicles() {
     });
   };
 
+  const popOverContent = (rejection_cause) => {
+    let heading = null;
+    if (rejection_cause) {
+      heading = <p>Rejection Cause :</p>;
+    } else {
+      heading = <p>Pending administrator checks</p>;
+    }
+    const content = (
+      <div className="p-3 " style={{ lineHeight: "10px" }}>
+        {heading}
+        <p>{rejection_cause}</p>
+        <Divider></Divider>
+        <p style={{ lineHeight: "20px" }}>
+          please note that it can it can take upto <br /> 24 hrs for
+          verifications.
+        </p>
+      </div>
+    );
+
+    return content;
+  };
+
   return (
     <div>
       <div
@@ -78,7 +92,7 @@ function ListedVehicles() {
               <th scope="col">ID</th>
               <th scope="col">Vehicle Name</th>
               <th scope="col">License Plate</th>
-
+              <th scope="col">Verification Status</th>
               <th scope="col">Availability</th>
               <th scope="col">Manage Vehicle</th>
             </tr>
@@ -94,7 +108,29 @@ function ListedVehicles() {
                     {vehicle.make} {vehicle.model}
                   </td>
                   <td>{vehicle.vehicle_number}</td>
-
+                  {vehicle.is_verified ? (
+                    <td>Verified</td>
+                  ) : (
+                    <td>
+                      <div className="row">
+                        {" "}
+                        {vehicle.rejection_cause ? (
+                          <p className="col col-md-4  "> Rejected</p>
+                        ) : (
+                          <p className="col col-md-4  ">Pending</p>
+                        )}{" "}
+                        <p className="col  col-md-2">
+                          <Popover
+                            content={popOverContent(vehicle.rejection_cause)}
+                            title="Pending Verifications"
+                            trigger="click"
+                          >
+                            <QuestionCircleOutlined />
+                          </Popover>
+                        </p>{" "}
+                      </div>
+                    </td>
+                  )}
                   {!vehicle.availability ? (
                     <td>Not Available</td>
                   ) : (

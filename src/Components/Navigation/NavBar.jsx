@@ -5,6 +5,7 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { Logout } from "../LogoutFunction/Logout";
 import { Link } from "react-router-dom";
+import primary_instance from "../axios_primary_instance";
 
 function NavBar(props) {
   const [visibility, setVisibility] = useState(true);
@@ -40,12 +41,9 @@ function NavBar(props) {
 
     const token = localStorage.getItem("access_token");
     if (token != null && visibility) {
-      axios
-        .get(`${base_url}/auth/current_user/`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      primary_instance
+        .get('/auth/current_user/', {
+        
         })
         .then((res) => {
           // console.log('current',res.data);

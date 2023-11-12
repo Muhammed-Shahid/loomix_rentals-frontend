@@ -32,17 +32,17 @@ function Cart(props) {
   const [defaultAddress, setdefaultAddress] = useState("");
   const [changeAddress, setchangeAddress] = useState(false);
   const [selectedAddress, setselectedAddress] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("gateway");
 
   // coupon
   const [couponRequiredPrice, setCouponRequiredPrice] = useState("");
   const [couponCodeError, setcouponCodeError] = useState(false);
   const [couponDiscount, setcouponDiscount] = useState(0);
-  const [couponApplyBtn, setcouponApplyBtn] = useState(true)
+  const [couponApplyBtn, setcouponApplyBtn] = useState(true);
   const dateFormat = "YYYY/MM/DD";
   const access_token = localStorage.getItem("access_token");
 
-  const [wallet_disabled, setwallet_disabled] = useState(true);
+  const [walletAvailability, setWalletAvailability] = useState(false);
 
   const [couponCode, setCouponCode] = useState("");
   useEffect(() => {
@@ -109,11 +109,18 @@ function Cart(props) {
     let hasAvailability = cartItems.some((item) => item.availability === true); // if atleast one vehicle is available,
     !hasAvailability ? setHasAvailability(false) : setHasAvailability(true); // hasAvailability return true
     // then calendar wont't be disabled.
-
-    if (props.user.wallet_cash >= amount_after_tax) {
-      setwallet_disabled(false);
-    }
   }, [totalProductAmount, shippingCharge, cartItems, deliveryDate, returnDate]);
+
+  const handleWalletAvailability = () => {
+    console.log("wallet_cash:", props.user.wallet_cash);
+    if (Number(props.user.wallet_cash) >= Number(checkoutAmount)) {
+      console.log("inside if wallet_cash:", props.user.wallet_cash);
+
+      console.log("wallet : ", true);
+
+      setWalletAvailability(true);
+    }
+  };
 
   const cartItemDlt = (itemtoRemove) => {
     let updatedCartItems = cartItems.filter((item) => item !== itemtoRemove);
@@ -166,7 +173,7 @@ function Cart(props) {
       bodyData.append("response", JSON.stringify(response));
 
       const response = await axios({
-        url: `https://loomix.in/payment/success/`,
+        url: `https://loomix.in/payment_success/`,
         method: "POST",
         data: bodyData,
         headers: {
@@ -214,9 +221,7 @@ function Cart(props) {
     bodyData.append("days", rented_days_count);
     bodyData.append("shipping_address_id", selectedAddress.id);
 
-   
-    bodyData.append('coupon_discount',couponDiscount)
-    
+    bodyData.append("coupon_discount", couponDiscount);
 
     if (paymentMethod == "gateway") {
       const res = await loadScript();
@@ -254,7 +259,7 @@ function Cart(props) {
         key_secret: process.env.REACT_APP_SECRET_KEY,
         amount: data.data.payment.amount,
         currency: "INR",
-        name: "Org. Name",
+        name: "Loomix Rentals",
         description: "Test teansaction",
         image: "", // add image url
         order_id: data.data.payment.id,
@@ -282,6 +287,8 @@ function Cart(props) {
       rzp1.open();
     }
   };
+
+  
 
   const handleCancel = () => {
     console.log("Clicked cancel button");
@@ -321,10 +328,9 @@ function Cart(props) {
     primary_instance
       .get("/manage_coupons/", { params: params })
       .then((res) => {
-
         setCheckoutAmount(checkoutAmount - res.data.coupon_discount);
-        setcouponDiscount(res.data.coupon_discount)
-        setcouponApplyBtn(false)
+        setcouponDiscount(res.data.coupon_discount);
+        setcouponApplyBtn(false);
       })
       .catch((error) => {
         if (error.response.status == 411) {
@@ -411,26 +417,6 @@ function Cart(props) {
             <form>
               <input
                 type="radio"
-                id="wallet"
-                name="payment_method"
-                value="wallet"
-                checked={paymentMethod === "wallet"}
-                disabled={wallet_disabled}
-                onChange={selectPaymentMethod}
-              />
-              <label className="m-2" htmlFor="wallet">
-                Pay from loomix wallet
-              </label>
-              {wallet_disabled && (
-                <label className="m-2 text-danger" htmlFor="wallet">
-                  Insufficient amount in wallet
-                </label>
-              )}
-
-              <br />
-
-              <input
-                type="radio"
                 id="gateway"
                 name="payment_method"
                 value="gateway"
@@ -440,6 +426,28 @@ function Cart(props) {
               <label className="m-2" htmlFor="gateway">
                 Pay using online payment gateway
               </label>
+
+              <br />
+              <input
+                type="radio"
+                id="wallet"
+                name="payment_method"
+                value="wallet"
+                checked={paymentMethod === "wallet"}
+                disabled={!walletAvailability}
+                onChange={selectPaymentMethod}
+              />
+
+              {!walletAvailability ? (
+                <label className="m-2 text-danger" htmlFor="wallet">
+                  Insufficient amount in wallet
+                </label>
+              ) : (
+                <label className="m-2" htmlFor="wallet">
+                  Pay from loomix wallet
+                </label>
+              )}
+
               <br />
             </form>
 
@@ -460,18 +468,22 @@ function Cart(props) {
                       type="text"
                     />
                   </div>
-                  {couponDiscount !='' && <p>Holaa !! You got a discount of {couponDiscount}</p> }
+                  {couponDiscount != "" && (
+                    <p>Holaa !! You got a discount of {couponDiscount}</p>
+                  )}
                   {couponCodeError && <p>Coupon not found</p>}
                   {couponRequiredPrice != "" && (
                     <p>Need to purchase for or above {couponRequiredPrice}</p>
                   )}
                   <div className="col">
-                   {couponApplyBtn && <button
-                      type="submit"
-                      className="btn btn-dark btn-sm btn-block"
-                    >
-                      Apply Coupon
-                    </button>}
+                    {couponApplyBtn && (
+                      <button
+                        type="submit"
+                        className="btn btn-dark btn-sm btn-block"
+                      >
+                        Apply Coupon
+                      </button>
+                    )}
                   </div>
                 </div>
               </form>
@@ -605,12 +617,11 @@ function Cart(props) {
                 {cartItems &&
                   cartItems.map((item) => (
                     <div className="row p-2 mb-3">
-                
                       <div className="col-lg-3 col-md-12 mb-4 mb-lg-0 ">
                         {/* Image */}
                         <div className="bg-image hover-overlay hover-zoom ripple rounded">
                           <img
-                            src={base_url+item.exterior_image}
+                            src={base_url + item.exterior_image}
                             className="w-100 rounded"
                             style={{ height: "150px" }}
                             alt="Vehicle Image"
@@ -639,13 +650,15 @@ function Cart(props) {
                               </strong>
                             </p>
                           </div>
-                          <div className="col col-md-3 " style={{textAlign:'left'}}>
+                          <div
+                            className="col col-md-3 "
+                            style={{ textAlign: "left" }}
+                          >
                             {item.discount > 0 && (
                               <div
                                 className="offer-tag"
                                 style={{
                                   color: "red",
-                                  
                                 }}
                               >
                                 <h6>-{item.discount}%</h6>
@@ -726,6 +739,7 @@ function Cart(props) {
                       <hr />
                     </div>
                   ))}
+
                 {/* Single item */}
               </div>
             </div>
@@ -808,7 +822,10 @@ function Cart(props) {
                 <button
                   type="button"
                   className="btn btn-dark btn-lg btn-block"
-                  onClick={() => setOpen(true)}
+                  onClick={() => {
+                    setOpen(true);
+                    handleWalletAvailability();
+                  }}
                   disabled={checkoutDisabled}
                 >
                   Checkout

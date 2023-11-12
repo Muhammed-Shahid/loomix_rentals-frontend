@@ -27,6 +27,8 @@ function CarDetails() {
   const { vehicle_id } = useParams();
   const [emptyReviews, setemptyReviews] = useState(false);
   const [reviews, setReviews] = useState([]);
+
+  const [blockPurchase, setBlockPurchase] = useState(true)
   const mainImageHandler = (url) => {
     setMainImage(url);
   };
@@ -45,10 +47,11 @@ function CarDetails() {
         params: params,
       })
       .then((res) => {
-        console.log(res.data.vehicles);
+        console.log(res.data);
 
         setVehicleDetails(res.data.vehicles[0]);
         setMainImage(res.data.vehicles[0].exterior_image);
+        setBlockPurchase(res.data.user_is_owner)
       });
 
     primary_instance.get("/vehicle_rating/", { params: params }).then((res) => {
@@ -60,7 +63,11 @@ function CarDetails() {
 
       console.log("reviews", res.data.reviews);
     });
+
+    
   }, [vehicle_id]);
+
+
 
   return (
     <div className="container pt-5 ">
@@ -248,7 +255,7 @@ function CarDetails() {
                 <p>Transmission : {vehicleDetails.transmission}</p>
               </div>
 
-              <Row
+     {    !blockPurchase?     (<Row
                 gutter={{
                   xs: 8,
                   sm: 16,
@@ -293,7 +300,9 @@ function CarDetails() {
                     Book now
                   </Button>
                 </Col> */}
-              </Row>
+              </Row>):(<Row>
+                {vehicleDetails.is_verified ? <h6 className="text-success">Verified</h6> : <h6 className="text-danger" >Pending Verification</h6> }
+              </Row> )}
             </Col>
           </Row>
         </Content>

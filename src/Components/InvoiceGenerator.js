@@ -23,6 +23,7 @@ function InvoiceGenerator(props) {
         params: params,
       })
       .then((res) => {
+        console.log(res.data);
         console.log(res.data.vehicles);
         setvehicleDetails(res.data.vehicles[0]);
         settotalAmount(order.amount);
@@ -63,7 +64,7 @@ function InvoiceGenerator(props) {
     setproductPrice(price);
     return {
       images: {
-        logo: "https://imgtr.ee/images/2023/10/16/0b1627e76b02ed35429be96bedfe5876.png",
+        logo: "https://i.ibb.co/4mCKcB7/newlogosmall.png",
         background: "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
       },
       sender: {

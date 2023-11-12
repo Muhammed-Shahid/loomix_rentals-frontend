@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 import React from "react";
-import ReactDOM from "react-dom";
+
+import "./CarDetails.css";
 
 import {
   Layout,
@@ -37,6 +38,7 @@ import {
 import axios from "axios";
 
 import { Link } from "react-router-dom";
+import primary_instance from "../../Components/axios_primary_instance";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Search } = Input;
@@ -122,13 +124,8 @@ export default function Browse() {
       window.location.href = "/login";
     } else {
       try {
-        axios
-          .get(`${base_url}/vehicles_view/`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          })
+        primary_instance
+          .get("/vehicles_view/")
           .then((res) => {
             setVehicles(res.data.vehicles);
             setMake(res.data.makes);
@@ -146,17 +143,11 @@ export default function Browse() {
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`${base_url}/user_liked`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setcart_items_id(res.data.cart_items);
-        setwishlist_items_id(res.data.wishlist_items);
-        console.log("cart items: ", res.data);
-      });
+    primary_instance.get("/user_liked/").then((res) => {
+      setcart_items_id(res.data.cart_items);
+      setwishlist_items_id(res.data.wishlist_items);
+      console.log("cart items: ", res.data);
+    });
   }, [reRender]);
 
   const handleFilterSubmit = () => {
@@ -167,13 +158,9 @@ export default function Browse() {
       search_param: filterData.search_param,
     };
     try {
-      axios
-        .get(`${base_url}/vehicles_view/`, {
+      primary_instance
+        .get("/vehicles_view/", {
           params: params,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
         })
         .then((res) => {
           setVehicles(res.data.vehicles);
@@ -198,26 +185,18 @@ export default function Browse() {
 
     if (!wishlist) {
       console.log(product_id);
-      axios
-        .post("https://loomix.in/manage_cart/", {
+      primary_instance
+        .post("/manage_cart/", {
           params: params,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
         })
         .then((res) => {
           console.log(res);
           setReRender(!reRender);
         });
     } else {
-      axios
-        .post("https://loomix.in/manage_wishlist/", {
+      primary_instance
+        .post("/manage_wishlist/", {
           params: params,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
         })
         .then((res) => {
           console.log(res);
@@ -352,24 +331,24 @@ export default function Browse() {
               marginTop: "5rem",
               padding: "15px",
               paddingLeft: "12%",
-              lineHeight:"10px"
+              lineHeight: "10px",
             }}
           >
-            <h6 >Price Range</h6>
-    
+            <h6>Price Range</h6>
+
             <Row>
               <Col>
                 <InputNumber
                   min={800}
                   max={10000}
-                  style={{ width: "150px" ,marginBottom:"10px"}}
+                  style={{ width: "150px", marginBottom: "10px" }}
                   value={sliderInputValue}
                   onChange={onSliderChange}
                 />
               </Col>
               <Col span={12}>
                 <Slider
-                  style={{ width: "140px"}}
+                  style={{ width: "140px" }}
                   min={800}
                   max={10000}
                   onChange={onSliderChange}
@@ -413,11 +392,15 @@ export default function Browse() {
               style={{ boxSizing: "border-box", maxWidth: "fit-content" }}
             >
               <Search
-                
+                className="search-input"
                 placeholder="Search make , model , place"
                 onSearch={onSearch}
-                style={{ width: 300,background:'white' }}
-                styles={{backgroundColor:'white'}}
+                style={{
+                  width: 300,
+                  background: "white",
+                  backgroundColor: "white",
+                }}
+                styles={{ backgroundColor: "white" }}
               />
             </div>
             <br />
@@ -433,7 +416,7 @@ export default function Browse() {
               {vehicles &&
                 vehicles.map((obj) => (
                   <Col className="gutter-row mb-5" key={obj.id}>
-                    {obj.discount > 0 &&(
+                    {obj.discount > 0 && (
                       <div
                         className="offer-tag bg-danger"
                         style={{

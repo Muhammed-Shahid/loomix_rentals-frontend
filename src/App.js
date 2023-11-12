@@ -21,6 +21,7 @@ import InvoiceGenerator from "./Components/InvoiceGenerator";
 import { ExcelGenerator } from "./Components/ExcelGenerator";
 import Wishlist from "./Pages/WIshlist/Wishlist";
 import AdminVehicleView from "./Pages/Admin/AdminVehicleView";
+import OrderDetails from "./Pages/User/OrderDetails";
 
 function App() {
   const [user, setUser] = useState([]);
@@ -62,7 +63,7 @@ function App() {
 
     {
       path: "/vehicle-detail_view/:vehicle_id",
-      element: <CarDetails />,
+      element: <CarDetails user={user} />,
     },
 
     {
@@ -80,6 +81,10 @@ function App() {
     {
       path: "/vehicle_admin_view/:vehicle_id",
       element: <AdminVehicleView />,
+    },
+    {
+      path: "/order_details/:order_id",
+      element: <OrderDetails />,
     },
   ]);
 
