@@ -10,7 +10,7 @@ axios.interceptors.response.use(
       console.log(localStorage.getItem('refresh_token'));
       try {
         const response = await axios.post(
-          'https://loomix.in/token/refresh/',
+          'http://localhost:8000/token/refresh/',
           {
             refresh: localStorage.getItem('refresh_token')
           },

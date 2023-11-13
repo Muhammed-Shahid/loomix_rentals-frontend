@@ -9,7 +9,6 @@ import primary_instance from "../axios_primary_instance";
 
 function NavBar(props) {
   const [visibility, setVisibility] = useState(true);
-  const base_url = "https://loomix.in";
   const [currentUser, setCurrentUser] = useState("");
 
   const cart_url = "/cart/";

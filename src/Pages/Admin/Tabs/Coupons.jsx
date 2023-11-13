@@ -1,30 +1,54 @@
 import React, { useEffect, useState } from "react";
 import primary_instance from "../../../Components/axios_primary_instance";
-import { Divider, Card, Button, Popconfirm } from "antd";
+import { Divider, Card, Button, Popconfirm, message } from "antd";
 function Coupons() {
   const [min_price, setMin_price] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [couponDiscount, setCouponDiscount] = useState("");
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [allCoupons, setAllCoupons] = useState([]);
   const handleSubmit = (e) => {
+    console.log("handle submit working.........");
     e.preventDefault();
     const params = {
       min_price: min_price,
       coupon_code: couponCode,
       coupon_discount: couponDiscount,
     };
-    primary_instance.post("/manage_coupons/", { params: params });
+    primary_instance.post("/manage_coupons/", { params: params }).then(()=>{
+      success();
+      setAllCoupons([...allCoupons, params]);
+
+    });
   };
+
+  const handleDeleteCOupon=(coupon_id)=>{
+    primary_instance.put('/manage_coupons/',{coupon_id:coupon_id}).then((res)=>{
+      console.log(res.data);
+    })
+  }
 
   useEffect(() => {
     primary_instance.get("/admin_controls/view_coupons/").then((res) => {
+      console.log(res.data.coupons);
       setAllCoupons(res.data.coupons);
     });
   }, []);
 
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Coupon Created",
+      style: {
+        marginTop: '20vh',
+      },
+    });
+  };
+
   return (
     <div>
+       {contextHolder}
       <section className="coupon-creator">
         <form className="p-3 g-3" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -58,9 +82,9 @@ function Coupons() {
               onChange={(e) => setCouponDiscount(e.target.value)}
             />
             <br />
-            <Button type="submit" className="btn btn-md btn-dark">
+            <button type="submit" className="btn btn-md btn-dark">
               Create Coupon
-            </Button>
+            </button>
           </div>
         </form>
       </section>
@@ -69,7 +93,8 @@ function Coupons() {
           {allCoupons &&
             allCoupons.map((coupon) => (
               <div
-                className="col col-md-4 border rounded p-3"
+                key={coupon.id}
+                className="col col-md-4 border rounded p-3 m-2"
                 style={{ textAlign: "left" }}
               >
                 <div>
@@ -84,27 +109,19 @@ function Coupons() {
                   style={{
                     display: "flex",
                     justifyContent: "end",
-                    marginTop:"10px"
+                    marginTop: "10px",
                   }}
                 >
-                  <Button
-                    // onClick={() => {
-                    //   // seteditableAddress(address);
-                    //   // ShowModal();
-                    // }}
-                    type="link"
-                  >
-                    Edit
-                  </Button>{" "}
+        
                   <Popconfirm
                     title="Delete Address"
-                    description="Are you sure to delete this address?"
-                    // onConfirm={() => handleDeleteAddress(address.id)}
+                    description="Delete this coupon?"
+                     onConfirm={()=>handleDeleteCOupon(coupon.id)}
                     // onCancel={cancelDeletePop}
                     okText="Yes"
                     cancelText="No"
                   >
-                    <Button type="link" danger>
+                    <Button  type="link" danger>
                       Delete
                     </Button>
                   </Popconfirm>
