@@ -1,11 +1,10 @@
-import { useEffect } from "react";
 import axios from "axios";
 
 export const Logout = () => {
 const logOut = async () => {
     try {
         const { data } = await axios.post(
-          "https://loomix.in/auth/logout/",
+          "http://localhost:8000/auth/logout/",
           {
             refresh_token: localStorage.getItem("refresh_token"),
           },
@@ -43,5 +42,4 @@ const logOut = async () => {
   return <p onClick={logOut}>Log out</p>
   
 };
-
 

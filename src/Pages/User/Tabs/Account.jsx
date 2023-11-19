@@ -15,16 +15,24 @@ import primary_instance from "../../../Components/axios_primary_instance";
 import { Button, Card } from "react-bootstrap";
 import instance from "../../../Components/axios_instance";
 import "./Tabs.css";
+import { containsMoreThanTwoConsecutiveSpaces } from "../../../Components/form_space_checker";
 function Account() {
   const [userData, setuserData] = useState([]);
   const [userAddress, setuserAddress] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
-
+  const [reRender, setreRender] = useState(false);
   const success = () => {
     messageApi.open({
       type: "success",
       content: "Success",
+      style: {
+        marginTop: "20vh",
+      },
     });
+  };
+
+  const handleReRender = () => {
+    setreRender(!reRender);
   };
 
   useEffect(() => {
@@ -32,7 +40,7 @@ function Account() {
       setuserData(res.data.user_details);
       setuserAddress(res.data.user_address);
     });
-  }, []);
+  }, [reRender]);
 
   const items = [
     {
@@ -44,7 +52,11 @@ function Account() {
       key: "2",
       label: "Address",
       children: (
-        <AddressTab userAddress={userAddress} successMessage={success} />
+        <AddressTab
+          userAddress={userAddress}
+          successMessage={success}
+          handleReRender={handleReRender}
+        />
       ),
     },
   ];
@@ -263,7 +275,7 @@ export const ProfileTab = (userData) => {
   );
 };
 
-export const AddressTab = ({ userAddress, successMessage }) => {
+export const AddressTab = ({ userAddress, successMessage, handleReRender }) => {
   const [isFormDisabled, setIsFormDisabled] = useState(true);
   const [addressDetails, setaddressDetails] = useState(userAddress);
   const [newAddressForm, setnewAddressForm] = useState(false);
@@ -307,11 +319,13 @@ export const AddressTab = ({ userAddress, successMessage }) => {
     e.preventDefault();
 
     const { name, value } = e.target;
-
-    setEditedAddressData({
-      ...editedAddressData,
-      [name]: value,
-    });
+if (value!=' ' && !containsMoreThanTwoConsecutiveSpaces(value)) {
+  
+  setEditedAddressData({
+    ...editedAddressData,
+    [name]: value,
+  });
+}
   };
   useEffect(() => {
     setModalContent(
@@ -419,6 +433,7 @@ export const AddressTab = ({ userAddress, successMessage }) => {
     setConfirmLoading(true);
     const params = {
       address_data: editedAddressData,
+      make_default: false,
       address_id: editableAddress.id,
     };
     primary_instance.patch("auth/manage_address/", params).then((res) => {
@@ -438,11 +453,12 @@ export const AddressTab = ({ userAddress, successMessage }) => {
     e.preventDefault();
 
     const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    if (value != " " && !containsMoreThanTwoConsecutiveSpaces(value)) {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleNewAddressSubmit = (e) => {
@@ -452,35 +468,57 @@ export const AddressTab = ({ userAddress, successMessage }) => {
       console.log(res.data);
 
       successMessage();
-      successMessage();
+
       setnewAddressForm(false);
+
+      handleReRender();
     });
   };
 
-  const addressDeleteError = () => {
+  const addressDeleteError = (message) => {
     messageApi.open({
       type: "error",
 
-      content: "This address is used in incomplete orders",
+      content: message,
+      style: {
+        marginTop: "20vh",
+      },
+    });
+  };
+
+  const changeDefaultAddress = (address_id) => {
+    const params = {
+      make_default: true,
+      address_id: address_id,
+    };
+    primary_instance.patch("auth/manage_address/", params).then((res) => {
+      handleReRender();
     });
   };
 
   const handleDeleteAddress = (address_id) => {
-    primary_instance
-      .put("auth/manage_address/", { address_id: address_id })
-      .then((res) => {
-        console.log(res);
-        if (res.status == 226 || res.status != 200) {
-          addressDeleteError();
-          addressDeleteError();
-        }
-        if (res.status == 200) {
-          const updatedArray = addressDetails.filter(
-            (address) => address.id !== address_id
-          );
-          setaddressDetails(updatedArray);
-        }
-      });
+    if (addressDetails.length <= 1) {
+      addressDeleteError(
+        "You have only one address. To delete it, create another one."
+      );
+    } else {
+      primary_instance
+        .put("auth/manage_address/", { address_id: address_id })
+        .then((res) => {
+          console.log(res);
+          if (res.status == 226 || res.status != 200) {
+            addressDeleteError("This address is used in incomplete orders");
+          }
+          if (res.status == 200) {
+            const updatedArray = addressDetails.filter(
+              (address) => address.id !== address_id
+            );
+            setaddressDetails(updatedArray);
+
+            handleReRender();
+          }
+        });
+    }
   };
 
   const cancelDeletePop = (e) => {
@@ -656,10 +694,20 @@ export const AddressTab = ({ userAddress, successMessage }) => {
       <div className="row mt-5 g-4">
         {addressDetails &&
           addressDetails.map((address) => (
-            <div className="col col-md-3 ">
+            <div key={address.id} className="col col-md-3 ">
               <Card style={{ textAlign: "left" }}>
                 <Card.Body style={{ height: "12rem" }}>
-                  <Card.Title>{address.house_name}</Card.Title>
+                  <div className="row">
+                    <div className="col col-md-8">
+                      <Card.Title>{address.house_name}</Card.Title>
+                    </div>
+
+                    {address.default_address && (
+                      <div className="col col-md-4">
+                        <p className="text-primary">Default</p>
+                      </div>
+                    )}
+                  </div>
                   <Card.Text>
                     {address.street +
                       ", " +
@@ -681,6 +729,16 @@ export const AddressTab = ({ userAddress, successMessage }) => {
                       right: "3px",
                     }}
                   >
+                    {!address.default_address && (
+                      <BUTTON
+                        onClick={() => {
+                          changeDefaultAddress(address.id);
+                        }}
+                        type="link"
+                      >
+                        Set as default
+                      </BUTTON>
+                    )}
                     <BUTTON
                       onClick={() => {
                         seteditableAddress(address);

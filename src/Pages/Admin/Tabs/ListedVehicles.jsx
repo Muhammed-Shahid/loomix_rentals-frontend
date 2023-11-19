@@ -11,7 +11,6 @@ function ListedVehicles() {
   const [reRender, setReRender] = useState(false);
   const [open, setOpen] = useState(false);
   const [modalConfirmLoading, setModalConfirmLoading] = useState(false);
-  const [modalContent, setModalContent] = useState("");
   const [newDiscount, setNewDiscount] = useState(0);
   const [currentVehicleDiscount, setcurrentVehicleDiscount] = useState({
     vehicle_id: "",

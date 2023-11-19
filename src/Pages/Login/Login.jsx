@@ -15,7 +15,7 @@ function Login() {
       password,
     };
 
-    const { data } = await axios.post("https://loomix.in/token/", user, {
+    const { data } = await axios.post("http://localhost:8000/token/", user, {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
@@ -28,7 +28,7 @@ function Login() {
         "Authorization"
       ] = `Bearer ${localStorage.getItem("access_token")}`;
 
-      const  user_data  = await axios.get("https://loomix.in/auth/current_user/")
+      const  user_data  = await axios.get("http://localhost:8000/auth/current_user/")
         .then((res) => {
        
           if (res.data.is_blocked) {
@@ -48,8 +48,8 @@ function Login() {
 
   return (
     <div className="container">
-      <div className="loginContainer row">
-        <div className="col col-md-6 col-12 ">
+      <div className="loginContainer  row">
+        <div className="col col-md-6 col-12 pt-5">
           <h2>Welocome Back</h2>
 
           <div className="wrapper">
@@ -95,7 +95,7 @@ function Login() {
               </button>
             </form>
             <div className="text-center fs-6">
-              <a href="">Forget password?</a> or <a href="/register">Sign up</a>
+              <a href="/password_reset">Forget password?</a> or <a href="/register">Sign up</a>
             </div>
           </div>
         </div>

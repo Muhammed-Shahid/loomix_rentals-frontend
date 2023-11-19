@@ -32,7 +32,7 @@ function AdminVehicleView() {
     setMainImage(url);
   };
 
-  const base_url = "https://loomix.in";
+  const base_url = "http://localhost:8000";
   const [mainImage, setMainImage] = useState(
     base_url + vehicleDetails.exterior_image
   );

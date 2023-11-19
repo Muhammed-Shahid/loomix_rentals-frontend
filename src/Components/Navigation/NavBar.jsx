@@ -6,6 +6,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { Logout } from "../LogoutFunction/Logout";
 import { Link } from "react-router-dom";
 import primary_instance from "../axios_primary_instance";
+import logOut from "../LogoutFunction/LogoutFunction";
 
 function NavBar(props) {
   const [visibility, setVisibility] = useState(true);
@@ -18,7 +19,7 @@ function NavBar(props) {
   useEffect(() => {
     const auth_token = localStorage.getItem("access_token");
     if (auth_token == undefined || auth_token == "" || auth_token == null) {
-      if (window.location.pathname != "/login" && window.location.pathname != "/"  &&window.location.pathname != "/register") {
+      if (window.location.pathname != "/login" && window.location.pathname != "/"  &&window.location.pathname != "/register" &&window.location.pathname != "/password_reset") {
         
         window.location.href = "/login";
       }
@@ -31,7 +32,8 @@ function NavBar(props) {
       localStorage.getItem("access_token") == null ||
       window.location.pathname == "/login" ||
       window.location.pathname == "/" ||
-      window.location.pathname == "/register"
+      window.location.pathname == "/register"||
+      window.location.pathname == "/password_reset" 
     ) {
       setVisibility(false);
     } else {
@@ -101,7 +103,7 @@ function NavBar(props) {
                     )}
                     <NavDropdown.Divider />
                     <NavDropdown.Item>
-                      <Logout />
+                     <p  onClick={logOut} > Logout </p>
                     </NavDropdown.Item>
                   </NavDropdown>
                   <Nav.Link href="#pricing">Help</Nav.Link>

@@ -10,6 +10,7 @@ function OtpPage({ closeOtpModel, registerUser,phone }) {
     code_five: "",
     code_six: "",
   });
+  const [errMsg, seterrMsg] = useState(false)
 
   const InputChnageHandler = (e) => {
     e.preventDefault();
@@ -36,7 +37,7 @@ function OtpPage({ closeOtpModel, registerUser,phone }) {
       code: code,
       phone:phone
     }
-    axios.post("https://loomix.in/auth/get_otp/", {post_data:post_data}, {
+    axios.post("http://localhost:8000/auth/get_otp/", {post_data:post_data}, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -52,6 +53,7 @@ function OtpPage({ closeOtpModel, registerUser,phone }) {
       
       })
       .catch((error) => {
+        seterrMsg(true)
         console.error("Error:", error);
       });
 
@@ -189,6 +191,7 @@ function OtpPage({ closeOtpModel, registerUser,phone }) {
                   />
                 </div>
               </div>
+              {errMsg && <p  className="text-danger">Wrong OTP. Please try again.</p> }
               <button type="submit" className="btn btn-dark submit_btn my-4">
                 Submit
               </button>

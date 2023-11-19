@@ -1,9 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  BrowserRouter,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import Registration from "./Pages/Registration/Registration";
 import LandingPage from "./Pages/LandingPage/LandingPage";
@@ -17,11 +13,11 @@ import CarDetails from "./Pages/BrowseCars/CarDetails";
 import Cart from "./Pages/Cart/Cart";
 import EditVehicle from "./Pages/User/Tabs/EditVehicle";
 import { useState } from "react";
-import InvoiceGenerator from "./Components/InvoiceGenerator";
-import { ExcelGenerator } from "./Components/ExcelGenerator";
 import Wishlist from "./Pages/WIshlist/Wishlist";
 import AdminVehicleView from "./Pages/Admin/AdminVehicleView";
 import OrderDetails from "./Pages/User/OrderDetails";
+import logOut from "./Components/LogoutFunction/LogoutFunction";
+import PasswordReset from "./Pages/Login/PasswordReset";
 
 function App() {
   const [user, setUser] = useState([]);
@@ -86,15 +82,25 @@ function App() {
       path: "/order_details/:order_id",
       element: <OrderDetails />,
     },
+    {
+      path: "/password_reset",
+      element: <PasswordReset />,
+    },
   ]);
+
+  useEffect(() => {
+    if (user && user.is_blocked == true) {
+      logOut();
+    }
+  }, [user]);
 
   return (
     <div className="App">
-      {(window.location.pathname != "/login") |
-        (window.location.pathname != "/") && (
-        <NavBar handleUserChange={handleUserChange} />
-      )}
-
+      {window.location.pathname !== "/login" &&
+        window.location.pathname !== "/" &&
+        (window.location.pathname !== "/password_reset" && (
+          <NavBar handleUserChange={handleUserChange} />
+        ))}
       <RouterProvider router={router}></RouterProvider>
     </div>
   );

@@ -12,7 +12,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useEffect } from "react";
-import { Tabs } from "antd";
+import { Tabs, Dropdown, Menu } from "antd";
 import primary_instance from "../../../Components/axios_primary_instance";
 import { ExcelGenerator } from "../../../Components/ExcelGenerator";
 
@@ -104,7 +104,14 @@ function Analytics() {
       },
     ],
   };
-
+  const makeMenu = (
+    <Menu>
+      <Menu.Item
+      // onClick={(e) => handleInputChange("make", item)}
+      // key={index}
+      >2023</Menu.Item>
+    </Menu>
+  );
   const items = [
     {
       key: "1",
@@ -115,7 +122,16 @@ function Analytics() {
           <h2> Sales Analytics</h2>
           <div className=" row year-selector gx-5 w-100">
             <div className="col " style={{ textAlign: "left" }}>
-              Year Selector
+              <Dropdown
+                overlay={makeMenu}
+                trigger={["hover"]}
+                placement="bottomLeft"
+                style={{ width: "100px" }}
+              >
+                <div style={{ textAlign: "left" }}>
+                  <h6>Select Year</h6>
+                </div>
+              </Dropdown>
             </div>
 
             <div className="col">

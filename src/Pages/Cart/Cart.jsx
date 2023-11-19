@@ -14,7 +14,7 @@ import { HeartOutlined } from "@ant-design/icons";
 import "./Cart.css";
 import primary_instance from "../../Components/axios_primary_instance";
 import axios, { Axios } from "axios";
-
+import logOut from "../../Components/LogoutFunction/LogoutFunction"
 function Cart(props) {
   const [cartItems, setCartItems] = useState([]);
   const [totalProductAmount, setTotlalProductAmount] = useState(0);
@@ -45,6 +45,9 @@ function Cart(props) {
   const [walletAvailability, setWalletAvailability] = useState(false);
 
   const [couponCode, setCouponCode] = useState("");
+
+
+
   useEffect(() => {
     primary_instance.get("/manage_cart").then((res) => {
       setCartItems(res.data);
@@ -173,7 +176,7 @@ function Cart(props) {
       bodyData.append("response", JSON.stringify(response));
 
       const response = await axios({
-        url: `https://loomix.in/payment_success/`,
+        url: `http://localhost:8000/payment_success/`,
         method: "POST",
         data: bodyData,
         headers: {
@@ -184,11 +187,10 @@ function Cart(props) {
         .then((res) => {
           console.log(res);
         })
-        .catch((err) => {
-          console.log(err);
-        });
+ 
     } catch (error) {
-      console.log(console.error());
+      console.log('errrr',console.error());
+      
     }
   };
 
@@ -200,6 +202,7 @@ function Cart(props) {
   };
 
   const handleCheckout = async () => {
+
     setModalContent("Processing Order...");
     setConfirmLoading(true);
 
@@ -234,7 +237,7 @@ function Cart(props) {
     }
 
     const data = await axios({
-      url: `https://loomix.in/manage_order/`,
+      url: `http://localhost:8000/manage_order/`,
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -245,13 +248,23 @@ function Cart(props) {
     }).then((res) => {
       console.log(res);
 
-      setTimeout(() => {
-        setModalContent("");
-        setOpen(false);
-        setConfirmLoading(false);
-      }, 2000);
       return res;
+    }).catch((err) => {
+      if (err.response && err.response.status === 401) {
+        console.log('Unauthorized access. Redirecting to login page.');
+        window.location.replace('/login')
+      }
+
     });
+    
+    
+    
+    
+    
+
+
+
+
 
     if (paymentMethod == "gateway") {
       var options = {
@@ -304,7 +317,7 @@ function Cart(props) {
       this item from cart ?
     </p>
   );
-  const base_url = "https://loomix.in";
+  const base_url = "http://localhost:8000";
 
   const selectAddressHandler = (address) => {
     setselectedAddress(address);
@@ -351,14 +364,18 @@ function Cart(props) {
       content: (
         <div className="modelAddress rounded border p-4 ">
           <h6> Delivery Address</h6>
-          {defaultAddress && (
             <div className="address-wrapper">
+          {defaultAddress && (
+              <div className="default-address-wrapper">
+
               <p>
                 {defaultAddress.house_name}, <br />
                 {defaultAddress.street}, {defaultAddress.place},<br />
                 {defaultAddress.city}, {defaultAddress.state},{" "}
                 {defaultAddress.postal_code}{" "}
               </p>
+              </div>
+                 )}
 
               {!changeAddress ? (
                 <Button onClick={() => setchangeAddress(true)}>
@@ -405,7 +422,7 @@ function Cart(props) {
                 </div>
               )}
             </div>
-          )}
+       
         </div>
       ),
     },

@@ -3,6 +3,7 @@ import "./Registration.css";
 import instance from "../../Components/axios_instance";
 import axios from "axios";
 import OtpPage from "./OtpPage";
+import { containsMoreThanTwoConsecutiveSpaces } from "../../Components/form_space_checker";
 function Registration() {
   const [formData, setFormData] = useState({
     // Initialize the form data object with default values
@@ -25,6 +26,8 @@ function Registration() {
   const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [otpModel, setOtpModel] = useState(false);
 
+  const [invalidPhoneNumber, setInvalidPhoneNumber] = useState(false);
+
   const otpModelHandler = () => {
     setOtpModel(false);
   };
@@ -32,25 +35,60 @@ function Registration() {
   const renderInnerComponent = () => {
     if (otpModel) {
       return (
-        <OtpPage closeOtpModel={otpModelHandler} registerUser={registerUser} phone={formData.phone}/>
+        <OtpPage
+          closeOtpModel={otpModelHandler}
+          registerUser={registerUser}
+          phone={formData.phone}
+        />
       );
     }
   };
 
   const handleInputChange = (e) => {
     e.preventDefault();
-
-    const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    let char_only=['lastName','firstName']
+    let no_space_exceptional_names = [
+      "street",
+      "landmark",
+      "state",
+      "place",
+      "city",
+      "house",
+      'lastName'
+    ];
+    let strictly_numerical = ["phone", "zip_code"];
+    let { name, value } = e.target;
+    if (name=='firstName' ||name=='lastName') {
+      value=value.replace(/[^a-zA-Z\s]/g, '');
+    }
+    if (no_space_exceptional_names.includes(name) ) {
+      if (value != " " && !containsMoreThanTwoConsecutiveSpaces(value)) {
+        
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+      }
+    } else if (strictly_numerical.includes(name)) {
+      let new_value=value.replace(/[^0-9]/g, "")
+      if (name=='phone' && new_value.length >10) {
+       new_value=new_value.slice(2) 
+      }
+      setFormData({
+        ...formData,
+        [name]: new_value,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value.replace(/\s/g, ""),
+      });
+    }
   };
 
   const registerUser = () => {
     axios
-      .post("https://loomix.in/auth/create_user/", formData, {
+      .post("http://localhost:8000/auth/create_user/", formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -70,14 +108,14 @@ function Registration() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (formData.password == formData.re_password) {
-      console.log(formData);
+    if (formData.phone == "" || formData.phone <= 0) {
+      setInvalidPhoneNumber(true);
+    } else if (formData.password == formData.re_password) {
       const params = {
         phone: formData.phone,
-       
       };
       axios
-        .get("https://loomix.in/auth/get_otp", {
+        .get("http://localhost:8000/auth/get_otp", {
           params: params,
         })
         .then((response) => {
@@ -87,7 +125,6 @@ function Registration() {
         .catch((error) => {
           console.error(error);
         });
-
     } else {
       setPasswordMismatch(true);
     }
@@ -100,7 +137,7 @@ function Registration() {
           {otpModel ? (
             renderInnerComponent()
           ) : (
-            <form  onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <div className="row d-flex justify-content-center align-items-center h-100">
                 <div className="col-12">
                   <div
@@ -169,7 +206,7 @@ function Registration() {
                                   <input
                                     type="text"
                                     required
-                                    id="form3Examplev5"
+                                    id="email"
                                     className="form-control form-control-lg"
                                     name="email"
                                     value={formData.email}
@@ -187,7 +224,7 @@ function Registration() {
                                 <div className="form-outline">
                                   <input
                                     type="tel"
-                                    id="form3Examplev5"
+                                    id="phone"
                                     required
                                     className="form-control form-control-lg"
                                     name="phone"
@@ -200,6 +237,7 @@ function Registration() {
                                   >
                                     Phone
                                   </label>
+                                  {invalidPhoneNumber && <p className="text-danger">Please enter a valid phone number.</p> }
                                 </div>
                               </div>
                             </div>
