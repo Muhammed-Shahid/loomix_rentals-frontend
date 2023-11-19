@@ -3,7 +3,7 @@ import axios from "axios";
  const logOut = async () => {
     try {
         const { data } = await axios.post(
-          "http://localhost:8000/auth/logout/",
+          "https://loomix.in/auth/logout/",
           {
             refresh_token: localStorage.getItem("refresh_token"),
           },
@@ -12,10 +12,10 @@ import axios from "axios";
         );
         localStorage.clear();
         axios.defaults.headers.common["Authorization"] = null;
-        window.location.replace('http://localhost:3000/login');
+        window.location.replace('/login');
       } catch (e) {
         console.log("user already logged out", e);
-        window.location.replace('http://localhost:3000/login');
+        window.location.replace('/login');
 
       }
 }
