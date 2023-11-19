@@ -176,7 +176,7 @@ function Cart(props) {
       bodyData.append("response", JSON.stringify(response));
 
       const response = await axios({
-        url: `http://localhost:8000/payment_success/`,
+        url: `https://loomix.in/payment_success/`,
         method: "POST",
         data: bodyData,
         headers: {
@@ -237,7 +237,7 @@ function Cart(props) {
     }
 
     const data = await axios({
-      url: `http://localhost:8000/manage_order/`,
+      url: `https://loomix.in/manage_order/`,
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -317,7 +317,7 @@ function Cart(props) {
       this item from cart ?
     </p>
   );
-  const base_url = "http://localhost:8000";
+  const base_url = "https://loomix.in";
 
   const selectAddressHandler = (address) => {
     setselectedAddress(address);
