@@ -39,6 +39,7 @@ import axios from "axios";
 
 import { Link } from "react-router-dom";
 import primary_instance from "../../Components/axios_primary_instance";
+import { render } from "@testing-library/react";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Search } = Input;
@@ -72,18 +73,19 @@ export default function Browse() {
   const [wishlist_items_id, setwishlist_items_id] = useState([]);
   const [reRender, setReRender] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 6, // adjust as needed
+    total: 0,
+  });
+
+  const handlePaginationChange = (page, pageSize) => {
+    setPagination({ ...pagination, current: page, pageSize });
+  };
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
-  const handlePageChange = (page) => {
-    // Update the current page state when the user changes the page
-    setCurrentPage(page);
-
-    // You can access the current page number here (page variable)
-    console.log(`Page changed to: ${page}`);
-  };
 
   let innerLayoutMarginLeft = 200;
 
@@ -119,28 +121,39 @@ export default function Browse() {
 
   const token = localStorage.getItem("access_token");
 
+  const fetchVehicles = async (page, pageSize) => {
+    const params = {
+      make: filterData.make,
+      location: filterData.location,
+      price_range: filterData.price_range,
+      search_param: filterData.search_param,
+      page: page,
+      items_per_page: pageSize,
+    };
+    try {
+      primary_instance
+        .get("/vehicles_view/", { params: params })
+        .then((res) => {
+          setVehicles(res.data.vehicles);
+          setMake(res.data.makes);
+          setLocation(res.data.locations);
+          setPagination({ ...pagination, total: res.data.total_vehicles });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     if (localStorage.getItem("access_token") === null) {
       window.location.href = "/login";
     } else {
-      try {
-        primary_instance
-          .get("/vehicles_view/")
-          .then((res) => {
-            setVehicles(res.data.vehicles);
-            setMake(res.data.makes);
-            setLocation(res.data.locations);
-            console.log(res.data.vehicles);
-            console.log(make);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (err) {
-        console.log(err);
-      }
+      fetchVehicles(pagination.current, pagination.pageSize);
     }
-  }, []);
+  }, [pagination.current, pagination.pageSize, reRender]);
 
   useEffect(() => {
     primary_instance.get("/user_liked/").then((res) => {
@@ -175,6 +188,18 @@ export default function Browse() {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleClearFilter = () => {
+    setFilterData({
+      ...filterData,
+      ["make"]: "",
+      ["location"]: "",
+      ["price_range"]: 10000,
+      ["search_param"]: "",
+    });
+
+    setReRender(!render);
   };
 
   const userLikedHandler = (product_id, remove, wishlist) => {
@@ -243,7 +268,7 @@ export default function Browse() {
 
   const onSearch = (value, _e, info) => {
     handleInputChange("search_param", value);
-    handleFilterSubmit();
+    setReRender(!reRender);
   };
 
   const [sliderInputValue, setSliderInputValue] = useState(1);
@@ -361,8 +386,12 @@ export default function Browse() {
           </div>
         </Menu>
 
-        <Button className="w-75 mt-5" onClick={handleFilterSubmit}>
+        <Button className="w-75 mt-5" onClick={() => setReRender(!reRender)}>
           Filter
+        </Button>
+
+        <Button className="w-75 mt-5" onClick={handleClearFilter}>
+          Clear All Filters
         </Button>
       </Sider>
       <Layout
@@ -548,12 +577,13 @@ export default function Browse() {
           }}
         >
           <Pagination
-            current={currentPage}
-            defaultCurrent={1}
-            total={100}
-            onChange={(page) => {
-              handlePageChange(page);
-            }}
+            current={pagination.current}
+            pageSize={pagination.pageSize}
+            total={pagination.total}
+            onChange={handlePaginationChange}
+            showTotal={(total, range) =>
+              `${range[0]}-${range[1]} of ${total} orders`
+            }
           />
         </Footer>
       </Layout>
