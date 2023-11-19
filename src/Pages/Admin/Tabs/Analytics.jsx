@@ -9,8 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  PointElement,
+  LineElement,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import { useEffect } from "react";
 import { Tabs, Dropdown, Menu } from "antd";
 import primary_instance from "../../../Components/axios_primary_instance";
@@ -20,6 +22,8 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
@@ -39,7 +43,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Chart.js Horizontal Bar Chart",
+      text: "",
     },
   },
 };
@@ -64,6 +68,7 @@ const chartData2 = [100, 200, 50, 400, 500];
 function Analytics() {
   const [successfullOrders, setSuccessfullOrders] = useState([]);
   const [cancelledOrders, setCancelledOrders] = useState([]);
+  const [revenue, setrevenue] = useState([])
 
   useEffect(() => {
     const params = {
@@ -73,6 +78,7 @@ function Analytics() {
       console.log(res.data);
       setSuccessfullOrders(res.data.successfull_orders);
       setCancelledOrders(res.data.cancelled_orders);
+      setrevenue(res.data.monthly_revenue)
     });
   }, []);
 
@@ -104,12 +110,41 @@ function Analytics() {
       },
     ],
   };
+
+  let revenue_data = {
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
+    datasets: [
+      {
+        label: "Revenue",
+        data: revenue,
+        fill: true,
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)",
+      }
+    ],
+  };
+
   const makeMenu = (
     <Menu>
       <Menu.Item
       // onClick={(e) => handleInputChange("make", item)}
       // key={index}
-      >2023</Menu.Item>
+      >
+        2023
+      </Menu.Item>
     </Menu>
   );
   const items = [
@@ -151,7 +186,7 @@ function Analytics() {
         <div>
           {" "}
           <h2> Sales Analytics</h2>
-          {successfullOrders && <Bar options={options} data={data} />}{" "}
+          {successfullOrders && <Line data={revenue_data} />}{" "}
         </div>
       ),
     },
