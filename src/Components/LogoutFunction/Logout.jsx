@@ -19,6 +19,10 @@ const logOut = async () => {
       }
 }
 
+const sampleFunc=()=>{
+  
+}
+
 //   useEffect(() => {
 //     (async () => {
 //       try {
