@@ -3,7 +3,7 @@ import logOut from "./LogoutFunction/LogoutFunction";
 
 const token = localStorage.getItem("access_token");
 const primary_instance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://loomix.in",
 
   headers: {
     "Content-Type": "application/json",
