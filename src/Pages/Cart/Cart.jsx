@@ -14,7 +14,8 @@ import { HeartOutlined } from "@ant-design/icons";
 import "./Cart.css";
 import primary_instance from "../../Components/axios_primary_instance";
 import axios, { Axios } from "axios";
-import logOut from "../../Components/LogoutFunction/LogoutFunction"
+import logOut from "../../Components/LogoutFunction/LogoutFunction";
+import PaypalPaymentComponent from "../../Components/Payments/PaypalPaymentComponent";
 function Cart(props) {
   const [cartItems, setCartItems] = useState([]);
   const [totalProductAmount, setTotlalProductAmount] = useState(0);
@@ -32,7 +33,7 @@ function Cart(props) {
   const [defaultAddress, setdefaultAddress] = useState("");
   const [changeAddress, setchangeAddress] = useState(false);
   const [selectedAddress, setselectedAddress] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("gateway");
+  const [paymentMethod, setPaymentMethod] = useState("rzp_gateway");
 
   // coupon
   const [couponRequiredPrice, setCouponRequiredPrice] = useState("");
@@ -45,9 +46,11 @@ function Cart(props) {
   const [walletAvailability, setWalletAvailability] = useState(false);
 
   const [couponCode, setCouponCode] = useState("");
-
-
-
+  
+  const [openPaypalModal, setopenPaypalModal] = useState(false)
+  
+  const [paypal_order_data, setpaypal_order_data] = useState('')
+ 
   useEffect(() => {
     primary_instance.get("/manage_cart").then((res) => {
       setCartItems(res.data);
@@ -183,14 +186,11 @@ function Cart(props) {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-      })
-        .then((res) => {
-          console.log(res);
-        })
- 
+      }).then((res) => {
+        console.log(res);
+      });
     } catch (error) {
-      console.log('errrr',console.error());
-      
+      console.log("errrr", console.error());
     }
   };
 
@@ -202,7 +202,6 @@ function Cart(props) {
   };
 
   const handleCheckout = async () => {
-
     setModalContent("Processing Order...");
     setConfirmLoading(true);
 
@@ -226,82 +225,82 @@ function Cart(props) {
 
     bodyData.append("coupon_discount", couponDiscount);
 
-    if (paymentMethod == "gateway") {
-      const res = await loadScript();
-      bodyData.append("payment_method", true);
-      console.log("gateway method");
-    } else if (paymentMethod == "wallet") {
-      console.log("wallet");
-      bodyData.append("payment_method", false);
-      console.log("wallet payment methiod");
-    }
-
-    const data = await axios({
-      url: `http://localhost:8000/manage_order/`,
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`,
-      },
-      data: bodyData,
-    }).then((res) => {
-      console.log(res);
-
-      return res;
-    }).catch((err) => {
-      if (err.response && err.response.status === 401) {
-        console.log('Unauthorized access. Redirecting to login page.');
-        window.location.replace('/login')
+    if (paymentMethod=='paypal_gateway') {
+    console.log('paypaaaaaling------', bodyData);
+    setpaypal_order_data(bodyData)
+    handlePaypalComponent(bodyData)
+    }else{
+      if (paymentMethod == "rzp_gateway") {
+        const res = await loadScript();
+        bodyData.append("payment_method", "rzp_gateway");
+        console.log("rzp_gateway method");
+      } else if (paymentMethod == "wallet") {
+        console.log("wallet");
+        bodyData.append("payment_method", paymentMethod);
+        console.log("wallet payment methiod");
       }
 
-    });
-    
-    
-    
-    
-    
-
-
-
-
-
-    if (paymentMethod == "gateway") {
-      var options = {
-        key_id: process.env.REACT_APP_PUBLIC_KEY, // in react your environment variable must start with REACT_APP_
-        key_secret: process.env.REACT_APP_SECRET_KEY,
-        amount: data.data.payment.amount,
-        currency: "INR",
-        name: "Loomix Rentals",
-        description: "Test teansaction",
-        image: "", // add image url
-        order_id: data.data.payment.id,
-        handler: function (response) {
-          // we will handle success by calling handlePaymentSuccess method and
-          // will pass the response that we've got from razorpay
-          handlePaymentSuccess(response);
+      const data = await axios({
+        url: `http://localhost:8000/manage_order/`,
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
         },
-        prefill: {
-          name: "User's name",
-          email: "User's email",
-          contact: "User's phone",
-        },
-        notes: {
-          address: "Razorpay Corporate Office",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
+        data: bodyData,
+      })
+        .then((res) => {
+          console.log(res);
+          setTimeout(()=>{
+
+            setOpen(false)
+          },2000)
+          return res;
+        })
+        .catch((err) => {
+          if (err.response && err.response.status === 401) {
+            console.log("Unauthorized access. Redirecting to login page.");
+            window.location.replace("/login");
+          }
+        });
+
+      if (paymentMethod == "rzp_gateway") {
+        var options = {
+          key_id: process.env.REACT_APP_PUBLIC_KEY, // in react your environment variable must start with REACT_APP_
+          key_secret: process.env.REACT_APP_SECRET_KEY,
+          amount: data.data.payment.amount,
+          currency: "INR",
+          name: "Loomix Rentals",
+          description: "Test teansaction",
+          image: "", // add image url
+          order_id: data.data.payment.id,
+          handler: function (response) {
+            // we will handle success by calling handlePaymentSuccess method and
+            // will pass the response that we've got from razorpay
+            handlePaymentSuccess(response);
+          },
+          prefill: {
+            name: "User's name",
+            email: "User's email",
+            contact: "User's phone",
+          },
+          notes: {
+            address: "Razorpay Corporate Office",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+      }
+
+      if (paymentMethod == "rzp_gateway") {
+        var rzp1 = new window.Razorpay(options);
+        rzp1.open();
+      }
     }
-
-    if (paymentMethod == "gateway") {
-      var rzp1 = new window.Razorpay(options);
-      rzp1.open();
-    }
+    
   };
-
-  
 
   const handleCancel = () => {
     console.log("Clicked cancel button");
@@ -309,6 +308,16 @@ function Cart(props) {
 
     setchangeAddress(false);
   };
+
+  const handlePaypalModalCancel=()=>{
+    setopenPaypalModal(false)
+  }
+
+  
+  const handlePaypalComponent=(bodyData)=>{
+    setOpen(false)
+    setopenPaypalModal(true)
+  }
 
   const removeItemWarningMsg = (
     <p>
@@ -364,65 +373,63 @@ function Cart(props) {
       content: (
         <div className="modelAddress rounded border p-4 ">
           <h6> Delivery Address</h6>
-            <div className="address-wrapper">
-          {defaultAddress && (
+          <div className="address-wrapper">
+            {defaultAddress && (
               <div className="default-address-wrapper">
-
-              <p>
-                {defaultAddress.house_name}, <br />
-                {defaultAddress.street}, {defaultAddress.place},<br />
-                {defaultAddress.city}, {defaultAddress.state},{" "}
-                {defaultAddress.postal_code}{" "}
-              </p>
+                <p>
+                  {defaultAddress.house_name}, <br />
+                  {defaultAddress.street}, {defaultAddress.place},<br />
+                  {defaultAddress.city}, {defaultAddress.state},{" "}
+                  {defaultAddress.postal_code}{" "}
+                </p>
               </div>
-                 )}
+            )}
 
-              {!changeAddress ? (
-                <Button onClick={() => setchangeAddress(true)}>
-                  Change Address
-                </Button>
-              ) : (
-                <div>
-                  <h6>Select Address : </h6>
-                  <div className="row selectAddress-wrapper">
-                    {address &&
-                      address.map((obj) => (
-                        <div
-                          onClick={() => selectAddressHandler(obj)}
-                          className="col col-md-3 addresses border p-2"
-                        >
-                          {selectedAddress && selectedAddress.id == obj.id ? (
-                            <p className="border border-primary">
-                              {obj.house_name}, <br />
-                              {obj.street}, {obj.place},<br />
-                              {obj.city}, {obj.state}, {obj.postal_code}{" "}
-                            </p>
-                          ) : (
-                            <p>
-                              {obj.house_name}, <br />
-                              {obj.street}, {obj.place},<br />
-                              {obj.city}, {obj.state}, {obj.postal_code}{" "}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    <div className="row mt-3 gx-0">
-                      <div className="col   col-md-2">
-                        {selectedAddress && (
-                          <Button
-                            onClick={() => setchangeAddress(false)}
-                            style={{ background: "black", color: "white" }}
-                          >
-                            Select{" "}
-                          </Button>
+            {!changeAddress ? (
+              <Button onClick={() => setchangeAddress(true)}>
+                Change Address
+              </Button>
+            ) : (
+              <div>
+                <h6>Select Address : </h6>
+                <div className="row selectAddress-wrapper">
+                  {address &&
+                    address.map((obj) => (
+                      <div
+                        onClick={() => selectAddressHandler(obj)}
+                        className="col col-md-3 addresses border p-2"
+                      >
+                        {selectedAddress && selectedAddress.id == obj.id ? (
+                          <p className="border border-primary">
+                            {obj.house_name}, <br />
+                            {obj.street}, {obj.place},<br />
+                            {obj.city}, {obj.state}, {obj.postal_code}{" "}
+                          </p>
+                        ) : (
+                          <p>
+                            {obj.house_name}, <br />
+                            {obj.street}, {obj.place},<br />
+                            {obj.city}, {obj.state}, {obj.postal_code}{" "}
+                          </p>
                         )}
                       </div>
+                    ))}
+                  <div className="row mt-3 gx-0">
+                    <div className="col   col-md-2">
+                      {selectedAddress && (
+                        <Button
+                          onClick={() => setchangeAddress(false)}
+                          style={{ background: "black", color: "white" }}
+                        >
+                          Select{" "}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-       
+              </div>
+            )}
+          </div>
         </div>
       ),
     },
@@ -434,14 +441,26 @@ function Cart(props) {
             <form>
               <input
                 type="radio"
-                id="gateway"
+                id="paypal_gateway"
                 name="payment_method"
-                value="gateway"
-                checked={paymentMethod === "gateway"}
+                value="paypal_gateway"
+                checked={paymentMethod === "paypal_gateway"}
                 onChange={selectPaymentMethod}
               />
-              <label className="m-2" htmlFor="gateway">
-                Pay using online payment gateway
+              <label className="m-2" htmlFor="paypal_gateway">
+                Pay using paypal gateway
+              </label>
+              <br />
+              <input
+                type="radio"
+                id="rzp_gateway"
+                name="payment_method"
+                value="rzp_gateway"
+                checked={paymentMethod === "rzp_gateway"}
+                onChange={selectPaymentMethod}
+              />
+              <label className="m-2" htmlFor="rzp_gateway">
+                Pay using razorpay gateway
               </label>
 
               <br />
@@ -513,6 +532,7 @@ function Cart(props) {
       title: "Confirm Order",
       content: (
         <div className="p-3">
+    
           <div>
             <h6> Delivery Address</h6>
 
@@ -532,7 +552,7 @@ function Cart(props) {
             {paymentMethod == "wallet" ? (
               <h6>Payment Method : From loomix wallet</h6>
             ) : (
-              <h6>Payment Method : Through online payment gateway </h6>
+              <h6>Payment Method : Through razorpay gateway </h6>
             )}
           </div>
         </div>
@@ -625,6 +645,11 @@ function Cart(props) {
           {modalContent}
         </div>
       </Modal>
+     <Modal onCancel={handlePaypalModalCancel} okType="text" okText='Cancel Payment' destroyOnClose centered title='Pay With PayPal' open={openPaypalModal} >
+     <PaypalPaymentComponent data={paypal_order_data} amount={checkoutAmount} closeModal={handlePaypalModalCancel} />
+     </Modal>
+     {/* {openPaypalModal && <PaypalPaymentComponent data={paypal_order_data} />} */}
+      
       <div className="container py-5">
         <div className="row d-flex justify-content-center my-4 ">
           <div className="col-md-8">
@@ -633,7 +658,7 @@ function Cart(props) {
                 {/* Single item */}
                 {cartItems &&
                   cartItems.map((item) => (
-                    <div className="row p-2 mb-3">
+                    <div key={item.id} className="row p-2 mb-3">
                       <div className="col-lg-3 col-md-12 mb-4 mb-lg-0 ">
                         {/* Image */}
                         <div className="bg-image hover-overlay hover-zoom ripple rounded">
@@ -683,7 +708,7 @@ function Cart(props) {
                             )}
                           </div>
                         </div>
-                        <p>{}</p>
+                       
                         <p>{item.place}</p>
 
                         <button
@@ -697,7 +722,7 @@ function Cart(props) {
                       </div>
                       <div className="col-lg-4 col-md-6 mb-4 mb-lg-0">
                         {/* Price */}
-                        <p className="text-start text-md-center">
+                        <div className="text-start text-md-center">
                           {item.discount ? (
                             <div>
                               <strong>
@@ -719,7 +744,7 @@ function Cart(props) {
                           ) : (
                             <strong>{item.price} /day</strong>
                           )}
-                        </p>
+                        </div>
                         {/* Price */}
                       </div>
                       <div
