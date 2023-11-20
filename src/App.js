@@ -96,8 +96,7 @@ function App() {
   }, [user]);
 
   const initialOptions = {
-    clientId:
-      "AfdPWh1y4iqNyIsu8av7kuWuZkz9jwfa-cibyUH_bnCf7Vg8JHr-m2j0g_d8KzeOnPNXWyMnOybud6gd",
+    clientId:"test",
     currency: "USD",
     intent: "capture",
   };

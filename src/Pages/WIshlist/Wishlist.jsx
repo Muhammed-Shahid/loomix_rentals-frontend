@@ -1,23 +1,15 @@
 import { Layout, Row, Col, Card, Pagination, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+
   HeartOutlined,
   ShoppingCartOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  AppstoreOutlined,
-  TeamOutlined,
-  ShopOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
+
 } from "@ant-design/icons";
 import primary_instance from "../../Components/axios_primary_instance";
 import { Link } from "react-router-dom";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer} = Layout;
 
 const { Meta } = Card;
 

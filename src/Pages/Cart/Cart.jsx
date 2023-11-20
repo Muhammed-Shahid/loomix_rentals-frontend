@@ -40,6 +40,8 @@ function Cart(props) {
   const [couponCodeError, setcouponCodeError] = useState(false);
   const [couponDiscount, setcouponDiscount] = useState(0);
   const [couponApplyBtn, setcouponApplyBtn] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
+
   const dateFormat = "YYYY/MM/DD";
   const access_token = localStorage.getItem("access_token");
 
@@ -311,7 +313,19 @@ function Cart(props) {
 
   const handlePaypalModalCancel=()=>{
     setopenPaypalModal(false)
+    showSuccessMsg();
   }
+
+  const showSuccessMsg = () => {
+    messageApi.open({
+      type: "success",
+      content: "Order Placed",
+      className: "custom-class",
+      style: {
+        marginTop: "20vh",
+      },
+    });
+  };
 
   
   const handlePaypalComponent=(bodyData)=>{
@@ -586,6 +600,9 @@ function Cart(props) {
   // Checkout Steps End
   return (
     <div className="container">
+
+{contextHolder}
+
       <Modal
         width={1000}
         title="Confirm Order"
