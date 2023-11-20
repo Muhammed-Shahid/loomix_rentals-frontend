@@ -19,6 +19,7 @@ import OrderDetails from "./Pages/User/OrderDetails";
 import logOut from "./Components/LogoutFunction/LogoutFunction";
 import PasswordReset from "./Pages/Login/PasswordReset";
 
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 function App() {
   const [user, setUser] = useState([]);
 
@@ -94,14 +95,23 @@ function App() {
     }
   }, [user]);
 
+  const initialOptions = {
+    clientId:
+      "AfdPWh1y4iqNyIsu8av7kuWuZkz9jwfa-cibyUH_bnCf7Vg8JHr-m2j0g_d8KzeOnPNXWyMnOybud6gd",
+    currency: "USD",
+    intent: "capture",
+  };
+
   return (
     <div className="App">
-      {window.location.pathname !== "/login" &&
-        window.location.pathname !== "/" &&
-        (window.location.pathname !== "/password_reset" && (
-          <NavBar handleUserChange={handleUserChange} />
-        ))}
-      <RouterProvider router={router}></RouterProvider>
+      <PayPalScriptProvider options={initialOptions}>
+        {window.location.pathname !== "/login" &&
+          window.location.pathname !== "/" &&
+          window.location.pathname !== "/password_reset" && (
+            <NavBar handleUserChange={handleUserChange} />
+          )}
+        <RouterProvider router={router}></RouterProvider>
+      </PayPalScriptProvider>
     </div>
   );
 }
