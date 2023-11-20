@@ -13,7 +13,7 @@ function PaypalPaymentComponent(props) {
   let access_token = localStorage.getItem("access_token");
   const handlePaymentSuccess = async (orderId) => {
     const data = await axios({
-      url: `http://localhost:8000/manage_order/`,
+      url: `https://loomix.in/manage_order/`,
       method: "POST",
       headers: {
         Accept: "application/json",

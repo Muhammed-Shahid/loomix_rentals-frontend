@@ -88,7 +88,7 @@ function Registration() {
 
   const registerUser = () => {
     axios
-      .post("http://localhost:8000/auth/create_user/", formData, {
+      .post("https://loomix.in/auth/create_user/", formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -115,7 +115,7 @@ function Registration() {
         phone: formData.phone,
       };
       axios
-        .get("http://localhost:8000/auth/get_otp", {
+        .get("https://loomix.in/auth/get_otp", {
           params: params,
         })
         .then((response) => {
